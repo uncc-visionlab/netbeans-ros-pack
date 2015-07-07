@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.uncc.netbeans.modules.rosproject
+OpenIDE-Module-Localizing-Bundle: org/uncc/netbeans/modules/rosproject/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
