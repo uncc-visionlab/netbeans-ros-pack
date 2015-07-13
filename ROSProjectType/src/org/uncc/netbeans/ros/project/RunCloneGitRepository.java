@@ -59,7 +59,7 @@ public class RunCloneGitRepository extends AbstractAction implements ContextAwar
         public GitContextAction(Lookup context) {
             p = context.lookup(Project.class);
             String name = ProjectUtils.getInformation(p).getDisplayName();
-            if (p instanceof AntBasedProject) {
+            if (p instanceof ROSProject) {
                 setEnabled(true);
                 putValue(NAME, actionName);
             }

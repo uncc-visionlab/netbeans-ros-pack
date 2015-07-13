@@ -58,7 +58,7 @@ public class TerminalDriverAction extends AbstractAction implements ContextAware
         public TerminalContextAction(Lookup context) {
             p = context.lookup(Project.class);
             String name = ProjectUtils.getInformation(p).getDisplayName();
-            if (p instanceof AntBasedProject) {
+            if (p instanceof ROSProject) {
                 setEnabled(true);
                 putValue(NAME, actionName);
             }

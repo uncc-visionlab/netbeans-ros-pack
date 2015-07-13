@@ -33,17 +33,17 @@ import org.openide.util.lookup.Lookups;
  * @author arwillis
  */
 @AntBasedProjectRegistration(
-        type = AntBasedProject.TYPE,
-        iconResource = AntBasedProject.ICON_RESOURCE,
-        sharedName = AntBasedProject.NAME_SHARED,
-        sharedNamespace = AntBasedProject.NAME_SPACE_SHARED,
-        privateName = AntBasedProject.NAME_PRIVATE,
-        privateNamespace = AntBasedProject.NAME_SPACE_PRIVATE
+        type = ROSProject.TYPE,
+        iconResource = ROSProject.ICON_RESOURCE,
+        sharedName = ROSProject.NAME_SHARED,
+        sharedNamespace = ROSProject.NAME_SPACE_SHARED,
+        privateName = ROSProject.NAME_PRIVATE,
+        privateNamespace = ROSProject.NAME_SPACE_PRIVATE
 )
-public class AntBasedProject implements Project {
+public class ROSProject implements Project {
 
-//    public static final String TYPE = "org.uncc.netbeans.ros.project";
-    public static final String TYPE = "org-ros-project";
+    public static final String TYPE = "org.uncc.netbeans.ros.project";
+//    public static final String TYPE = "org-ros-project";
     public static final String NAME_SPACE_SHARED = "http://visionlab.uncc.edu/ns/ros-project/1";
     public static final String NAME_SHARED = "data";
     public static final String NAME_PRIVATE = "project-private";
@@ -53,7 +53,7 @@ public class AntBasedProject implements Project {
     public static final String PROJECT_ROS_SRCDIR = "ros_ws";
     final AntProjectHelper helper;
 
-    public AntBasedProject(AntProjectHelper helper) {
+    public ROSProject(AntProjectHelper helper) {
         this.helper = helper;
     }
 
@@ -63,7 +63,7 @@ public class AntBasedProject implements Project {
             this,
             helper,
             new Info(),
-            new AntBasedProjectLogicalView(this),
+            new ROSProjectLogicalView(this),
             new AntBasedActionProvider(),
             new AntBasedProjectMoveOrRenameOperation(),
             new AntBasedProjectCopyOperation(),
@@ -116,7 +116,7 @@ public class AntBasedProject implements Project {
 
         @Override
         public Project getProject() {
-            return AntBasedProject.this;
+            return ROSProject.this;
         }
     }
 
@@ -143,16 +143,16 @@ public class AntBasedProject implements Project {
         @Override
         public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
             if (string.equalsIgnoreCase(ActionProvider.COMMAND_RENAME)) {
-                DefaultProjectOperations.performDefaultRenameOperation(AntBasedProject.this, "");
+                DefaultProjectOperations.performDefaultRenameOperation(ROSProject.this, "");
             }
             if (string.equalsIgnoreCase(ActionProvider.COMMAND_MOVE)) {
-                DefaultProjectOperations.performDefaultMoveOperation(AntBasedProject.this);
+                DefaultProjectOperations.performDefaultMoveOperation(ROSProject.this);
             }
             if (string.equals(ActionProvider.COMMAND_DELETE)) {
-                DefaultProjectOperations.performDefaultDeleteOperation(AntBasedProject.this);
+                DefaultProjectOperations.performDefaultDeleteOperation(ROSProject.this);
             }
             if (string.equals(ActionProvider.COMMAND_COPY)) {
-                DefaultProjectOperations.performDefaultCopyOperation(AntBasedProject.this);
+                DefaultProjectOperations.performDefaultCopyOperation(ROSProject.this);
             }
             //Here we find the Ant script and call the target we need!
             if (string.equals(ActionProvider.COMMAND_BUILD)) {
@@ -287,9 +287,9 @@ public class AntBasedProject implements Project {
 
     private final class AntBasedProjectDeleteOperation implements DeleteOperationImplementation {
 
-        private final AntBasedProject project;
+        private final ROSProject project;
 
-        private AntBasedProjectDeleteOperation(AntBasedProject project) {
+        private AntBasedProjectDeleteOperation(ROSProject project) {
             this.project = project;
         }
 

@@ -20,10 +20,10 @@ import org.openide.util.lookup.Lookups;
 
 public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
 
-    public final AntBasedProject project;
-    public static final String CUSTOMIZER_FOLDER_PATH = "Projects/"+AntBasedProject.TYPE+"/Customizer";
+    public final ROSProject project;
+    public static final String CUSTOMIZER_FOLDER_PATH = "Projects/"+ROSProject.TYPE+"/Customizer";
 
-    public ROSProjectPropertiesLookupProvider(AntBasedProject project) {
+    public ROSProjectPropertiesLookupProvider(ROSProject project) {
         this.project = project;
     }
 

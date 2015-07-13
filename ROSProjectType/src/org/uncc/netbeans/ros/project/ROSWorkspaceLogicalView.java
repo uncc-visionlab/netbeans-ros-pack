@@ -29,11 +29,11 @@ import org.openide.util.lookup.ProxyLookup;
  *
  * @author arwillis
  */
-public class AntBasedProjectLogicalView implements LogicalViewProvider {
+public class ROSWorkspaceLogicalView implements LogicalViewProvider {
 
-    private final AntBasedProject project;
+    private final ROSProject project;
 
-    public AntBasedProjectLogicalView(AntBasedProject project) {
+    public ROSWorkspaceLogicalView(ROSProject project) {
         this.project = project;
     }
 
@@ -41,8 +41,8 @@ public class AntBasedProjectLogicalView implements LogicalViewProvider {
     public Node createLogicalView() {
         try {
             //Get the Text directory, creating if deleted
-            FileObject text = project.getProjectDirectory();
-//            FileObject text = project.getSubFolder(AntBasedProject.PROJECT_ROS_SRCDIR, true);
+//            FileObject text = project.getProjectDirectory();
+            FileObject text = project.getSubFolder("ros_ws", true);
 
             //Get the DataObject that represents it
             DataFolder textDataObject = DataFolder.findFolder(text);
@@ -66,39 +66,45 @@ public class AntBasedProjectLogicalView implements LogicalViewProvider {
      */
     private static final class ProjectNode extends FilterNode {
 
-        final AntBasedProject project;
+        final ROSProject project;
 
-        public ProjectNode(Node node, AntBasedProject project) throws DataObjectNotFoundException {
-            super(node, new FilterNode.Children(node),
+        public ProjectNode(Node node, ROSProject project) throws DataObjectNotFoundException {
+            super(node,
+                    // Default child node handler/constructor
+                    //new FilterNode.Children(node),
+                    // Custom child node handler/constructor 
+                    NodeFactorySupport.createCompositeChildren(project,
+                            RootNode.REGISTERED_NODE_LOCATION),
                     //The projects system wants the project in the Node's lookup.
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
                     new ProxyLookup(new Lookup[]{
                         Lookups.singleton(project),
                         node.getLookup()
-                    }));
+                    })
+            );
             this.project = project;
         }
 
         @Override
         public Action[] getActions(boolean arg0) {
             Action[] nodeActions = new Action[]{
-                CommonProjectActions.newFileAction(),
-                //The 'null' indicates that the default icon will be used:
-                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
-                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
-                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
-                CommonProjectActions.moveProjectAction(),
-                CommonProjectActions.renameProjectAction(),
-                CommonProjectActions.copyProjectAction(),
-                CommonProjectActions.deleteProjectAction(),
-//                CommonProjectActions.setAsMainProjectAction(),
+//                CommonProjectActions.newFileAction(),
+//                //The 'null' indicates that the default icon will be used:
+//                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
+//                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
+//                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
+//                CommonProjectActions.moveProjectAction(),
+//                CommonProjectActions.renameProjectAction(),
+//                CommonProjectActions.copyProjectAction(),
+//                CommonProjectActions.deleteProjectAction(),
+                //                CommonProjectActions.setAsMainProjectAction(),
                 new RunROSCore(),
                 new RunRViz(),
                 new RunCloneGitRepository(),
-                CommonProjectActions.closeProjectAction(),
-                CommonProjectActions.setProjectConfigurationAction(),
-                CommonProjectActions.customizeProjectAction()
+//                CommonProjectActions.closeProjectAction(),
+//                CommonProjectActions.setProjectConfigurationAction(),
+//                CommonProjectActions.customizeProjectAction()
             };
             return nodeActions;
         }
@@ -114,7 +120,7 @@ public class AntBasedProjectLogicalView implements LogicalViewProvider {
 //        }
         @Override
         public Image getIcon(int type) {
-            return ImageUtilities.loadImage(AntBasedProject.ICON_RESOURCE);
+            return ImageUtilities.loadImage(ROSProject.ICON_RESOURCE);
         }
 
         @Override
@@ -136,13 +142,17 @@ public class AntBasedProjectLogicalView implements LogicalViewProvider {
     private static final class RootNode extends AbstractNode {
 
         public static final String REGISTERED_NODE_LOCATION
-                = "Projects/org-uncc-netbeans-ros-project/Nodes";
-        final AntBasedProject project;
+                = "Projects/"+ROSProject.TYPE+"/Nodes";
+//        public static final String REGISTERED_NODE_LOCATION
+//                = "Projects/"+ROSProject.TYPE+"/Nodes";
+        final ROSProject project;
 
-        public RootNode(AntBasedProject project) {
-            super(NodeFactorySupport.createCompositeChildren(project, REGISTERED_NODE_LOCATION), Lookups.singleton(project));
+        public RootNode(ROSProject project) {
+            super(NodeFactorySupport.createCompositeChildren(project, 
+                    ROSWorkspaceLogicalView.RootNode.REGISTERED_NODE_LOCATION), 
+                    Lookups.singleton(project));
             this.project = project;
-            setIconBaseWithExtension(AntBasedProject.ICON_RESOURCE);
+            setIconBaseWithExtension(ROSProject.ICON_RESOURCE);
         }
 
         @Override
@@ -162,7 +172,7 @@ public class AntBasedProjectLogicalView implements LogicalViewProvider {
 
         @Override
         public Image getIcon(int type) {
-            return ImageUtilities.loadImage(AntBasedProject.ICON_RESOURCE);
+            return ImageUtilities.loadImage(ROSProject.ICON_RESOURCE);
         }
 
         @Override
