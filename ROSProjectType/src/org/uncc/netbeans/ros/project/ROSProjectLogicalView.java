@@ -31,6 +31,8 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class ROSProjectLogicalView implements LogicalViewProvider {
 
+    public static final String REGISTERED_NODE_LOCATION
+            = "Projects/" + ROSProject.TYPE + "/Nodes";
     private final ROSProject project;
 
     public ROSProjectLogicalView(ROSProject project) {
@@ -71,17 +73,16 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
         public ProjectNode(Node node, ROSProject project) throws DataObjectNotFoundException {
             super(node,
                     // Default child node handler/constructor
-//                    new FilterNode.Children(node),
+//                                        new FilterNode.Children(node),
                     // Custom child node handler/constructor 
                     NodeFactorySupport.createCompositeChildren(project,
-                            RootNode.REGISTERED_NODE_LOCATION),
+                            REGISTERED_NODE_LOCATION),
                     //The projects system wants the project in the Node's lookup.
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
                     new ProxyLookup(new Lookup[]{
                         Lookups.singleton(project),
-                        node.getLookup()
-                    })
+                        node.getLookup()})
             );
             this.project = project;
         }
@@ -109,15 +110,6 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
             return nodeActions;
         }
 
-//        @Override
-//        public Action[] getActions(boolean arg0) {
-//            return new Action[]{
-//                CommonProjectActions.newFileAction(),
-//                CommonProjectActions.copyProjectAction(),
-//                CommonProjectActions.deleteProjectAction(),
-//                CommonProjectActions.closeProjectAction()
-//            };
-//        }
         @Override
         public Image getIcon(int type) {
             return ImageUtilities.loadImage(ROSProject.ICON_RESOURCE);
@@ -133,57 +125,6 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
             return project.getProjectDirectory().getName();
         }
 
-    }
-
-//    @Override
-//    public org.openide.nodes.Node createLogicalView() {
-//        return new RootNode(project);
-//    }
-    static final class RootNode extends AbstractNode {
-
-        public static final String REGISTERED_NODE_LOCATION
-                = "Projects/"+ROSProject.TYPE+"/Nodes";
-//        public static final String REGISTERED_NODE_LOCATION
-//                = "Projects/"+ROSProject.TYPE+"/Nodes";
-        final ROSProject project;
-
-        public RootNode(ROSProject project) {
-            super(NodeFactorySupport.createCompositeChildren(project, 
-                    ROSProjectLogicalView.RootNode.REGISTERED_NODE_LOCATION), 
-                    Lookups.singleton(project));
-            this.project = project;
-            setIconBaseWithExtension(ROSProject.ICON_RESOURCE);
-        }
-
-        @Override
-        public Action[] getActions(boolean arg0) {
-            Action[] nodeActions = new Action[8];
-            nodeActions[0] = CommonProjectActions.newFileAction();
-            //The 'null' indicates that the default icon will be used:
-            nodeActions[1] = ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null);
-            nodeActions[2] = ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null);
-            nodeActions[3] = ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null);
-            nodeActions[4] = CommonProjectActions.copyProjectAction();
-            nodeActions[5] = CommonProjectActions.deleteProjectAction();
-            nodeActions[6] = CommonProjectActions.setAsMainProjectAction();
-            nodeActions[7] = CommonProjectActions.closeProjectAction();
-            return nodeActions;
-        }
-
-        @Override
-        public Image getIcon(int type) {
-            return ImageUtilities.loadImage(ROSProject.ICON_RESOURCE);
-        }
-
-        @Override
-        public Image getOpenedIcon(int type) {
-            return getIcon(type);
-        }
-
-        @Override
-        public String getDisplayName() {
-            return project.getProjectDirectory().getName();
-        }
     }
 
     @Override
@@ -191,5 +132,4 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
         //leave unimplemented for now
         return null;
     }
-
 }

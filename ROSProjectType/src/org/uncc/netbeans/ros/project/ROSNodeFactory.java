@@ -5,12 +5,15 @@
  */
 package org.uncc.netbeans.ros.project;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
+import org.netbeans.modules.cnd.makeproject.MakeProject;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.NodeList;
@@ -22,6 +25,8 @@ import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.uncc.netbeans.ros.project.ws.ROSWorkspaceFilterNode;
+import org.uncc.netbeans.ros.project.ws.ROSWorkspaceFilterNode2;
 
 /**
  *
@@ -40,8 +45,8 @@ public class ROSNodeFactory implements NodeFactory {
         assert p != null;
         return new FileNodesList(p);
 //        try {
-              // create default node for all elements
-//            AbstractNode nd = new AbstractNode(Children.LEAF);
+////               create default node for all elements
+////            AbstractNode nd = new AbstractNode(Children.LEAF);
 //            ROSProjectFilterNode nd = new ROSProjectFilterNode(project);
 //            return NodeFactorySupport.fixedNodeList(nd);
 //        } catch (DataObjectNotFoundException ex) {
@@ -90,10 +95,11 @@ public class ROSNodeFactory implements NodeFactory {
                         Node fobjNode = DataObject.find(folderFile).getNodeDelegate();
                         if (folderFile.getName().equals("nbproject")) {
                             // do nothing -- do not add to view
-//                        } else if (folderFile.getName().equals("ros_ws")) {
-//                            result.add(new ROSProjectFilterNode(fobjNode, project));
-//                        } else if (folderFile.getName().equals("src")) {
-//                            result.add(new ROSWorkspaceFilterNode(fobjNode, project));
+                        } else if (folderFile.getName().equals("ros_ws")) {
+                            // do nothing -- do not add to view
+//                            ROSWorkspaceFilterNode nd = new ROSWorkspaceFilterNode(project);                            
+                            ROSWorkspaceFilterNode2 nd = new ROSWorkspaceFilterNode2(project);                            
+                            result.add(nd);
                         } else {
                             result.add(DataObject.find(folderFile).getNodeDelegate());
                         }

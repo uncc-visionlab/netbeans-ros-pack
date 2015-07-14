@@ -24,7 +24,7 @@ public class ROSProjectPropertiesProvider
     private static final String GENERAL = "General";
 
     @ProjectCustomizer.CompositeCategoryProvider.Registration(
-            projectType = "org-ros-project", position = 10)
+            projectType = ROSProject.TYPE, position = 10)
     public static ROSProjectPropertiesProvider createGeneral() {
         return new ROSProjectPropertiesProvider();
     }

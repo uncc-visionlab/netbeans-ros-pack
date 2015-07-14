@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project;
+package org.uncc.netbeans.ros.project.ws;
 
 import java.awt.Image;
 import javax.swing.Action;
@@ -20,6 +20,11 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
+import org.uncc.netbeans.ros.project.ROSProject;
+import org.uncc.netbeans.ros.project.ROSProjectLogicalView;
+import org.uncc.netbeans.ros.project.RunCloneGitRepository;
+import org.uncc.netbeans.ros.project.RunROSCore;
+import org.uncc.netbeans.ros.project.RunRViz;
 
 /**
  *
@@ -28,18 +33,21 @@ import org.openide.util.lookup.ProxyLookup;
 /**
  * This is the node you actually see inside the project node for the project
  */
-public class ROSProjectFilterNode extends FilterNode {
+public class ROSWorkspaceFilterNode2 extends FilterNode {
 
     private static Image smallImage
             = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
 
-    public ROSProjectFilterNode(Node node, Project project) throws DataObjectNotFoundException {
+    public ROSWorkspaceFilterNode2(Node node, Project project) throws DataObjectNotFoundException {
         super(node,
                 NodeFactorySupport.createCompositeChildren(project,
-                        ROSProjectLogicalView.RootNode.REGISTERED_NODE_LOCATION+"ros_ws"),
+                        ROSProjectLogicalView.REGISTERED_NODE_LOCATION),
                 null
         );
-        //super(DataObject.find(project.getProjectDirectory().getFileObject("ros_ws")).getNodeDelegate());
+    }
+
+    public ROSWorkspaceFilterNode2(Project project) throws DataObjectNotFoundException {
+        super(DataObject.find(project.getProjectDirectory().getFileObject("ros_ws")).getNodeDelegate());
     }
 
     @Override

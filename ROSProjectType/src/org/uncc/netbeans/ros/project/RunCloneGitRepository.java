@@ -68,7 +68,7 @@ public class RunCloneGitRepository extends AbstractAction implements ContextAwar
         @Override
         public void actionPerformed(ActionEvent e) {
             new CloneAction(new ContextHolder(VCSContext.EMPTY)).actionPerformed(e);
-            UNUSEDRunGetGitRepository runws = new UNUSEDRunGetGitRepository();
+//            UNUSEDRunGetGitRepository runws = new UNUSEDRunGetGitRepository();
 //            String homeDir = p.getProjectDirectory().getPath();
 //            RunInNetbeansTerminal.runInNewTerminal(actionName, homeDir, cmds);
         }

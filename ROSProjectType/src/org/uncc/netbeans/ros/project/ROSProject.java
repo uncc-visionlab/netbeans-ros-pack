@@ -5,6 +5,7 @@
  */
 package org.uncc.netbeans.ros.project;
 
+import org.uncc.netbeans.ros.project.ws.ROSWorkspaceProjectProvider;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class ROSProject implements Project {
     public static final String NAME_SPACE_PRIVATE = "http://visionlab.uncc.edu/ns/ros-project-private/1";
     public static final String ICON_RESOURCE = "org/uncc/netbeans/ros/project/resources/project_icon.png";
     // TODO Constant moved to project customizer
-    public static final String PROJECT_ROS_SRCDIR = "ros_ws";
+//    public static final String PROJECT_ROS_SRCDIR = "ros_ws";
     final AntProjectHelper helper;
 
     public ROSProject(AntProjectHelper helper) {
@@ -68,7 +69,8 @@ public class ROSProject implements Project {
             new AntBasedProjectMoveOrRenameOperation(),
             new AntBasedProjectCopyOperation(),
             new AntBasedProjectDeleteOperation(this),
-            new ROSProjectPropertiesLookupProvider(this) 
+            new ROSProjectPropertiesLookupProvider(this),
+            new ROSWorkspaceProjectProvider(this)            
         });
     }
 
@@ -77,7 +79,7 @@ public class ROSProject implements Project {
         return helper.getProjectDirectory();
     }
 
-    FileObject getSubFolder(String foldername, boolean create) {
+    public FileObject getSubFolder(String foldername, boolean create) {
         FileObject result = getProjectDirectory().getFileObject(foldername);
         if (result == null && create) {
             try {
