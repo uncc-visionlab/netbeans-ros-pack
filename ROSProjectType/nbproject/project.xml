@@ -224,6 +224,7 @@
             <public-packages>
                 <package>org.uncc.netbeans.ros.project</package>
                 <package>org.uncc.netbeans.ros.project.resources</package>
+                <package>org.uncc.netbeans.ros.project.ws</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/ant-contrib-1.0b3.jar</runtime-relative-path>
