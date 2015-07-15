@@ -16,7 +16,6 @@ import org.netbeans.spi.project.SubprojectProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.netbeans.modules.cnd.makeproject.MakeProject;
-import org.uncc.netbeans.ros.project.ROSProject;
 
 /**
  *

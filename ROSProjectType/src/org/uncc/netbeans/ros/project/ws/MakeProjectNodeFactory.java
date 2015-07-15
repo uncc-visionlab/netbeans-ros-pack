@@ -11,7 +11,13 @@ import org.netbeans.modules.cnd.makeproject.MakeProject;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.NodeList;
+import org.openide.filesystems.FileAttributeEvent;
+import org.openide.filesystems.FileChangeAdapter;
+import org.openide.filesystems.FileChangeListener;
+import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileRenameEvent;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
 /**
@@ -20,17 +26,18 @@ import org.openide.nodes.Node;
  */
 @NodeFactory.Registration(projectType = MakeProjectNodeFactory.TYPE, position = 200)
 public class MakeProjectNodeFactory implements NodeFactory {
+
     public static final String TYPE = "org.uncc.netbeans.ros.project.ws";
-
     public static String REGISTERED_NODE_LOCATION = "Projects/" + TYPE + "/Nodes";
-
+    MakeProject p;
     public MakeProjectNodeFactory() {
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public NodeList createNodes(Project project) {
-        MakeProject p = project.getLookup().lookup(MakeProject.class);
+//        System.out.println("REGENERATING NODES");
+        p = project.getLookup().lookup(MakeProject.class);
         assert p != null;
         FilterFileNodesList fn = new FilterFileNodesList(p) {
             @Override

@@ -5,33 +5,19 @@
  */
 package org.uncc.netbeans.ros.project;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.swing.Action;
 import javax.swing.event.ChangeListener;
-import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeList;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataFolder.FolderNode;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
-import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.ProxyLookup;
-import org.uncc.netbeans.ros.project.ROSNodeFactory;
-import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunCloneGitRepository;
-import org.uncc.netbeans.ros.project.RunROSCore;
-import org.uncc.netbeans.ros.project.RunRViz;
 import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
 
 /**
@@ -66,13 +52,18 @@ public class ROSProjectProjectNodeFactory implements NodeFactory {
         }
 
         @Override
-        public Node node(Project node) {
+        public Node node(final Project node) {
             FilterNode fn = null;
             try {
-                Node n = DataObject.find(node.getProjectDirectory()).getNodeDelegate();
-                if (n instanceof FolderNode && 
+                DataObject d = DataObject.find(node.getProjectDirectory());
+//                d.addPropertyChangeListener(this);
+                Node n = d.getNodeDelegate();
+//                n.addNodeListener(ROSProjectProjectNodeFactory.this);
+                if (n instanceof FolderNode && //false &&
                         n.getName().equals(ROSNodeFactory.ROS_WORKSPACE_FOLDER)) {
-                    fn = new MakeProjectFilterNode(n,node);
+                    fn = new MakeProjectFilterNode(n, node);
+                } else {
+                    fn = new FilterNode(n);
                 }
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
