@@ -5,7 +5,6 @@
  */
 package org.uncc.netbeans.ros.project;
 
-import org.uncc.netbeans.ros.project.ws.ROSWorkspaceProjectProvider;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,10 @@ import org.openide.util.lookup.Lookups;
 )
 public class ROSProject implements Project {
 
+    // Needs to match the <code-name-base> tag from project.xml
+    // <code-name-base>org-uncc-netbeans-ros-project</code-name-base>
+    // and needs to match the Module line in the Manifest
+    // OpenIDE-Module: org.uncc.netbeans.ros.project
     public static final String TYPE = "org.uncc.netbeans.ros.project";
 //    public static final String TYPE = "org-ros-project";
     public static final String NAME_SPACE_SHARED = "http://visionlab.uncc.edu/ns/ros-project/1";
@@ -70,7 +73,7 @@ public class ROSProject implements Project {
             new AntBasedProjectCopyOperation(),
             new AntBasedProjectDeleteOperation(this),
             new ROSProjectPropertiesLookupProvider(this),
-            new ROSWorkspaceProjectProvider(this)            
+            new ROSProjectProjectProvider(this)            
         });
     }
 

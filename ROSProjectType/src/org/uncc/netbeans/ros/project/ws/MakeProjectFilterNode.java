@@ -8,7 +8,6 @@ package org.uncc.netbeans.ros.project.ws;
 import java.awt.Image;
 import javax.swing.Action;
 import org.netbeans.api.project.Project;
-import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
@@ -33,25 +32,30 @@ import org.uncc.netbeans.ros.project.RunRViz;
 /**
  * This is the node you actually see inside the project node for the project
  */
-public class ROSWorkspaceFilterNode2 extends FilterNode {
+public class MakeProjectFilterNode extends FilterNode {
 
-    private static Image smallImage
-            = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
+    protected static final String IMAGE = "org/netbeans/modules/cnd/makeproject/ui/resources/makeProject.gif";
+    private static Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
 
-    public ROSWorkspaceFilterNode2(Node node, Project project) throws DataObjectNotFoundException {
-        super(node,
-                NodeFactorySupport.createCompositeChildren(project,
-                        ROSProjectLogicalView.REGISTERED_NODE_LOCATION),
-                null
-        );
+    public MakeProjectFilterNode(Node node) {
+        super(node);
     }
 
-    public ROSWorkspaceFilterNode2(Project project) throws DataObjectNotFoundException {
-        super(DataObject.find(project.getProjectDirectory().getFileObject("ros_ws")).getNodeDelegate());
+    public MakeProjectFilterNode(Node node, Project project) throws DataObjectNotFoundException {
+        super(node,
+                    // Default child node handler/constructor
+//                                        new FilterNode.Children(node),
+                NodeFactorySupport.createCompositeChildren(project,
+                        MakeProjectNodeFactory.REGISTERED_NODE_LOCATION),
+                new ProxyLookup(new Lookup[]{
+                    Lookups.singleton(project),
+                    node.getLookup()})
+        );
     }
 
     @Override
     public Action[] getActions(boolean arg0) {
+        Action[] parentActions = super.getActions(arg0);
         Action[] nodeActions = new Action[]{
             //                CommonProjectActions.newFileAction(),
             //                //The 'null' indicates that the default icon will be used:
@@ -69,7 +73,18 @@ public class ROSWorkspaceFilterNode2 extends FilterNode {
         //                CommonProjectActions.setProjectConfigurationAction(),
         //                CommonProjectActions.customizeProjectAction()
         };
-        return nodeActions;
+        Action[] allActions = new Action[parentActions.length+nodeActions.length];
+        int i=0;
+        while (i < parentActions.length) {
+            allActions[i]=parentActions[i];
+            i++;
+        }
+        int j=0;
+        while (j < nodeActions.length) {
+            allActions[i]=nodeActions[j];
+            i++; j++;
+        }
+        return allActions;
     }
 
 //    @Override
@@ -94,15 +109,17 @@ public class ROSWorkspaceFilterNode2 extends FilterNode {
     //badge to it by merging it via a NetBeans API utility method:
     @Override
     public Image getIcon(int type) {
-        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-        Image original = root.getNodeDelegate().getIcon(type);
+//        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
+//        Image original = root.getNodeDelegate().getIcon(type);
+        Image original = ImageUtilities.loadImage(IMAGE);
         return ImageUtilities.mergeImages(original, smallImage, 7, 7);
     }
 
     @Override
     public Image getOpenedIcon(int type) {
-        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-        Image original = root.getNodeDelegate().getIcon(type);
+//        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
+//        Image original = root.getNodeDelegate().getIcon(type);
+        Image original = ImageUtilities.loadImage(IMAGE);
         return ImageUtilities.mergeImages(original, smallImage, 7, 7);
     }
 }

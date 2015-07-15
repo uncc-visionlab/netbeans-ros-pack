@@ -3,38 +3,47 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project.ws;
+package org.uncc.netbeans.ros.project;
 
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.swing.Action;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeList;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataFolder.FolderNode;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.Children;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.ProxyLookup;
+import org.uncc.netbeans.ros.project.ROSNodeFactory;
 import org.uncc.netbeans.ros.project.ROSProject;
+import org.uncc.netbeans.ros.project.RunCloneGitRepository;
+import org.uncc.netbeans.ros.project.RunROSCore;
+import org.uncc.netbeans.ros.project.RunRViz;
+import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
 
 /**
  *
  * @author arwillis
  */
-//@NodeFactory.Registration(projectType = "org-netbeans-modules-cnd-makeproject", position = 20)
 @NodeFactory.Registration(projectType = ROSProject.TYPE, position = 20)
-public class ROSWorkspaceProjectNodeFactory implements NodeFactory {
+public class ROSProjectProjectNodeFactory implements NodeFactory {
 
-//    @StaticResource()
-//    public static final String SUB_ICON = "org/customer/project/sub/icon.png";
     @Override
     public NodeList<?> createNodes(Project project) {
-        ROSWorkspaceProjectProvider rsp = project.getLookup().lookup(ROSWorkspaceProjectProvider.class);
+        ROSProjectProjectProvider rsp = project.getLookup().lookup(ROSProjectProjectProvider.class);
         assert rsp != null;
         return new ReportsNodeList(rsp.getSubprojects());
     }
@@ -60,18 +69,11 @@ public class ROSWorkspaceProjectNodeFactory implements NodeFactory {
         public Node node(Project node) {
             FilterNode fn = null;
             try {
-                fn = new ROSWorkspaceFilterNode(node);
-                fn = new FilterNode(DataObject.find(node.getProjectDirectory()).getNodeDelegate()) {
-                    @Override
-                    public Image getIcon(int type) {
-                        return ImageUtilities.loadImage(ROSWorkspaceNode.IMAGE);
-                    }
-
-                    @Override
-                    public Image getOpenedIcon(int type) {
-                        return ImageUtilities.loadImage(ROSWorkspaceNode.IMAGE);
-                    }
-                };
+                Node n = DataObject.find(node.getProjectDirectory()).getNodeDelegate();
+                if (n instanceof FolderNode && 
+                        n.getName().equals(ROSNodeFactory.ROS_WORKSPACE_FOLDER)) {
+                    fn = new MakeProjectFilterNode(n,node);
+                }
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }

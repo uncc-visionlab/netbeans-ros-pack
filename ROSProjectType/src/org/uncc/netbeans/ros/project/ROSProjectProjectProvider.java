@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project.ws;
+package org.uncc.netbeans.ros.project;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -23,11 +23,11 @@ import org.uncc.netbeans.ros.project.ROSProject;
  * @author arwillis
  */
 
-public class ROSWorkspaceProjectProvider implements SubprojectProvider {
+public class ROSProjectProjectProvider implements SubprojectProvider {
 
     private final ROSProject project;
 
-    public ROSWorkspaceProjectProvider(ROSProject project) {
+    public ROSProjectProjectProvider(ROSProject project) {
         this.project = project;
     }
 
