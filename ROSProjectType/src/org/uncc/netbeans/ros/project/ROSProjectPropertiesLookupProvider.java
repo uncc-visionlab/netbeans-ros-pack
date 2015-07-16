@@ -66,8 +66,8 @@ public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            StatusDisplayer.getDefault().setStatusText("OK button clicked for "
-                    + project.getProjectDirectory().getName() + " customizer!");
+            StatusDisplayer.getDefault().setStatusText("Settings for "
+                    + project.getProjectDirectory().getName() + " stored.");
             FileObject fobj = project.getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
             try {
                 OutputStream os = fobj.getOutputStream();
@@ -76,7 +76,6 @@ public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            System.out.println("HERE");
         }
     }
 }

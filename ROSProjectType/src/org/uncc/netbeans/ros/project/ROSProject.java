@@ -8,8 +8,10 @@ package org.uncc.netbeans.ros.project;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.tools.ant.module.api.support.ActionUtils;
@@ -94,6 +96,20 @@ public class ROSProject implements Project {
         return result;
     }
 
+    public String getProperty(String propertyName) {
+        FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
+        Properties properties = new Properties();
+        try {
+            InputStream is = fobj.getInputStream();
+            properties.load(is);
+            is.close();
+        } catch (IOException e) {
+            System.out.println("Could not open Config file");
+        }
+        return properties.getProperty(propertyName);
+    }
+    
+    
     private final class Info implements ProjectInformation {
 
         @Override
