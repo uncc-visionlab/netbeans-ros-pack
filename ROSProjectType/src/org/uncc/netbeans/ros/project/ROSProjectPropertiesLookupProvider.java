@@ -22,6 +22,7 @@ public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
 
     public final ROSProject project;
     public static final String CUSTOMIZER_FOLDER_PATH = "Projects/"+ROSProject.TYPE+"/Customizer";
+//    public static final String CUSTOMIZER_FOLDER_PATH = "Projects/org-netbeans-modules-cnd-makeproject/Customizer";
 
     public ROSProjectPropertiesLookupProvider(ROSProject project) {
         this.project = project;
