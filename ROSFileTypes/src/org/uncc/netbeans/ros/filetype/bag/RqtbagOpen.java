@@ -14,6 +14,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
+import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 import org.uncc.netbeans.ros.project.RunROSCore;
 
@@ -33,7 +34,7 @@ public final class RqtbagOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final BagDataObject context;
-
+    
     public RqtbagOpen(BagDataObject context) {
         this.context = context;
     }
