@@ -12,8 +12,14 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
+import org.openide.util.Utilities;
 import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
@@ -30,23 +36,17 @@ import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 })
 @NbBundle.Messages({"CTL_RoslaunchOpen=Open with roslaunch/roscore"})
 public final class RoslaunchOpen implements ActionListener {
+
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
-    private final LaunchDataObject context;    
+    private final LaunchDataObject context;
     ROSProject project;
     Project projec;
-    
+
     public RoslaunchOpen(LaunchDataObject context) {
-        this.projec = context.getLookup().lookup(Project.class);
-//        Node n = DataObject.find(pf).getNodeDelegate();
-//        while (n.getParentNode() != null) {
-//            n = n.getParentNode();
-//            Project p = n.getLookup().lookup(Project.class);
-//            if (p != null) {
-//                break;
-//            }
-//        }
-//        Project proj = pf.getLookup().lookup(Project.class);
+//        MakeProject p1 = Utilities.actionsGlobalContext().lookup(MakeProject.class);
+        ROSProject p2 = Utilities.actionsGlobalContext().lookup(ROSProject.class);
+        
         this.context = context;
     }
 
@@ -57,17 +57,17 @@ public final class RoslaunchOpen implements ActionListener {
         String wsFolder = project.getProperty("ros.ws");
         String wsInstallFolder = project.getProperty("ros.ws.install");
 //        String wsSrcFolder = project.getProperty("ros.ws.install");
-        String installSetupPath=".";
+        String installSetupPath = ".";
         if (project.getProjectDirectory().getFileObject(wsFolder).
                 getFileObject(wsInstallFolder).getFileObject("setup.bash") != null) {
-            
+
         } else {
             // abort the run --> no install directory available
-            installSetupPath = project.getProjectDirectory().getPath()+"/"
-                    +wsFolder+"/"+wsInstallFolder+"/";
+            installSetupPath = project.getProjectDirectory().getPath() + "/"
+                    + wsFolder + "/" + wsInstallFolder + "/";
         }
         String projfolder = project.getProjectDirectory().getPath();
-        
+
         String homeDir = context.getPrimaryFile().getParent().getPath();
         String actionName = "roscore";
 //        commandList = new String[]{
@@ -84,10 +84,10 @@ public final class RoslaunchOpen implements ActionListener {
         actionName = "roslaunch";
         String launchfilename = context.getPrimaryFile().getNameExt();
         commandList = new String[]{
-            "source "+rosRootFolder+"setup.bash\n",
-            "source "+installSetupPath+"setup.bash\n",
-            "cd "+homeDir+"\n",
-            "roslaunch "+launchfilename+"\n",
+            "source " + rosRootFolder + "setup.bash\n",
+            "source " + installSetupPath + "setup.bash\n",
+            "cd " + homeDir + "\n",
+            "roslaunch " + launchfilename + "\n",
             "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();

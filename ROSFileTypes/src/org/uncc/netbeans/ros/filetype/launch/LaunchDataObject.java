@@ -6,7 +6,6 @@
 package org.uncc.netbeans.ros.filetype.launch;
 
 import java.io.IOException;
-import org.netbeans.api.project.Project;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
@@ -18,11 +17,9 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
-import org.uncc.netbeans.ros.project.ROSProject;
 
 @Messages({
     "LBL_Launch_LOADER=ROS Launch File"
@@ -96,7 +93,7 @@ public class LaunchDataObject extends MultiDataObject {
         super(pf, loader);
         registerEditor("text/x-roslaunch+xml", true);
     }
-
+   
     @Override
     protected int associateLookup() {
         return 1;
