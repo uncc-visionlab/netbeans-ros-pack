@@ -59,7 +59,6 @@ public final class MakeProjectAction extends AbstractAction implements ContextAw
             Node n = dobj.getNodeDelegate();
             if (n != null && n instanceof FolderNode && n.getName().equals("ros_ws")) {
                 setEnabled(true);
-                System.out.println("HERE");
                 putValue(NAME, "Action on Workspace Folder");
             }
             putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);

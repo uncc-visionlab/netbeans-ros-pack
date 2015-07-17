@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project;
+package org.uncc.netbeans.ros.project.inactive;
 
+import org.uncc.netbeans.ros.project.ROSProjectProjectProvider;
+import org.uncc.netbeans.ros.project.inactive.ROSNodeFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,7 @@ import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
 
 /**
@@ -60,7 +63,7 @@ public class ROSProjectProjectNodeFactory implements NodeFactory {
                 Node n = d.getNodeDelegate();
 //                n.addNodeListener(ROSProjectProjectNodeFactory.this);
                 if (n instanceof FolderNode && //false &&
-                        n.getName().equals(ROSNodeFactory.ROS_WORKSPACE_FOLDER)) {
+                        n.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
                     fn = new MakeProjectFilterNode(n, node);
                 } else {
                     fn = new FilterNode(n);

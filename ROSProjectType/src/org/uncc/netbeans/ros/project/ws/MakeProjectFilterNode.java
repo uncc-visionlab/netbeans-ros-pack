@@ -6,20 +6,13 @@
 package org.uncc.netbeans.ros.project.ws;
 
 import java.awt.Image;
-import java.util.Enumeration;
-import java.util.List;
 import javax.swing.Action;
 import org.netbeans.api.project.Project;
-import org.netbeans.spi.project.ui.support.NodeFactorySupport;
-import org.netbeans.spi.project.ui.support.NodeList;
 import org.openide.filesystems.FileAttributeEvent;
 import org.openide.filesystems.FileChangeListener;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileRenameEvent;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataFolder;
-import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -27,12 +20,8 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
-import org.uncc.netbeans.ros.project.FilterFileNodesList;
+import org.uncc.netbeans.ros.project.ProjectChildrenFactory;
 import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.ROSProjectLogicalView;
-import org.uncc.netbeans.ros.project.RunCloneGitRepository;
-import org.uncc.netbeans.ros.project.RunROSCore;
-import org.uncc.netbeans.ros.project.RunRViz;
 
 /**
  *
@@ -41,31 +30,24 @@ import org.uncc.netbeans.ros.project.RunRViz;
 /**
  * This is the node you actually see inside the project node for the project
  */
-public class MakeProjectFilterNode extends FilterNode implements FileChangeListener {
+public class MakeProjectFilterNode extends FilterNode {
 
     protected static final String IMAGE = "org/netbeans/modules/cnd/makeproject/ui/resources/makeProject.gif";
     private static Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
     Project p;
-    FileObject fobj = null;
 
-//    public MakeProjectFilterNode(Node node) {
-//        super(node);
-//    }
     public MakeProjectFilterNode(Node node, Project project) throws DataObjectNotFoundException {
         super(node,
                 // Default child node handler/constructor
-                //                                        new FilterNode.Children(node),
-                NodeFactorySupport.createCompositeChildren(project,
-                        MakeProjectNodeFactory.REGISTERED_NODE_LOCATION),
+                new ProjectChildrenFactory(project, node),
+                //                    new FilterNode.Children(node),
+                //                NodeFactorySupport.createCompositeChildren(project,
+                //                        MakeProjectNodeFactory.REGISTERED_NODE_LOCATION),
                 new ProxyLookup(new Lookup[]{
                     Lookups.singleton(project),
-                    node.getLookup()})
+                    node.getLookup(),})
         );
         p = project;
-        if (fobj == null) {
-            fobj = p.getProjectDirectory();
-            fobj.addFileChangeListener(this);
-        }
     }
 
     @Override
@@ -136,76 +118,5 @@ public class MakeProjectFilterNode extends FilterNode implements FileChangeListe
 //        Image original = root.getNodeDelegate().getIcon(type);
         Image original = ImageUtilities.loadImage(IMAGE);
         return ImageUtilities.mergeImages(original, smallImage, 7, 7);
-    }
-
-    void setNodes() {
-        org.openide.nodes.Children c = this.getChildren();
-        FilterFileNodesList fn = new FilterFileNodesList(p) {
-            @Override
-            public boolean checkAddOK(FileObject folderFile) {
-                if (folderFile.getName().equals("nbproject")) {
-                    // do nothing -- do not add to view
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            @Override
-            public Node createNode(FileObject fobj, Node fobjNode) {
-                return fobjNode;
-            }
-        };
-        Node[] n1;
-        n1 = fn.keys().toArray(new Node[0]);
-        List<Node> nl = fn.keys();
-        boolean addNode = true;
-        for (Node newNode : nl) {
-            for (int i = 0; i < c.getNodesCount(); i++) {
-                if (c.getNodeAt(i).equals(newNode)) {
-                    addNode = false;
-                    break;
-                }
-            }
-            if (addNode) {
-                c.add(new Node[]{newNode});
-            }
-        }
-    }
-
-    @Override
-    public void fileFolderCreated(FileEvent fe) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
-    }
-
-    @Override
-    public void fileDataCreated(FileEvent fe) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
-    }
-
-    @Override
-    public void fileChanged(FileEvent fe) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
-    }
-
-    @Override
-    public void fileDeleted(FileEvent fe) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
-    }
-
-    @Override
-    public void fileRenamed(FileRenameEvent fre) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
-    }
-
-    @Override
-    public void fileAttributeChanged(FileAttributeEvent fae) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        setNodes();
     }
 }

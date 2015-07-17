@@ -10,7 +10,6 @@ import javax.swing.Action;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
-import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.ProjectSensitiveActions;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
@@ -34,25 +33,21 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
     public static final String REGISTERED_NODE_LOCATION
             = "Projects/" + ROSProject.TYPE + "/Nodes";
     private final ROSProject project;
-
     public ROSProjectLogicalView(ROSProject project) {
         this.project = project;
     }
-
+    
     @Override
     public Node createLogicalView() {
         try {
             //Get the Text directory, creating if deleted
             FileObject text = project.getProjectDirectory();
 //            FileObject text = project.getSubFolder(AntBasedProject.PROJECT_ROS_SRCDIR, true);
-
             //Get the DataObject that represents it
             DataFolder textDataObject = DataFolder.findFolder(text);
-
             //Get its default node-we'll wrap our node around it to change the
             //display name, icon, etc
             Node realTextFolderNode = textDataObject.getNodeDelegate();
-
             //This FilterNode will be our project node
             return new ProjectNode(realTextFolderNode, project);
         } catch (DataObjectNotFoundException donfe) {
@@ -73,10 +68,12 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
         public ProjectNode(Node node, ROSProject project) throws DataObjectNotFoundException {
             super(node,
                     // Default child node handler/constructor
-//                                        new FilterNode.Children(node),
+//                    new ROSProjectChildrenFactory(project).Children(node),
+                    new ProjectChildrenFactory(project, node),
+//                    new FilterNode.Children(node),
                     // Custom child node handler/constructor 
-                    NodeFactorySupport.createCompositeChildren(project,
-                            REGISTERED_NODE_LOCATION),
+//                    NodeFactorySupport.createCompositeChildren(project,
+//                            REGISTERED_NODE_LOCATION),
                     //The projects system wants the project in the Node's lookup.
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
@@ -84,6 +81,7 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                         Lookups.singleton(project),
                         node.getLookup()})
             );
+            node.addNodeListener(project);
             this.project = project;
         }
 

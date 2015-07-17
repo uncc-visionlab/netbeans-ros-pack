@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project;
+package org.uncc.netbeans.ros.project.inactive;
 
 import java.awt.BorderLayout;
 import org.netbeans.modules.dlight.terminal.action.MyTerminalSupportImpl;
@@ -15,14 +15,14 @@ import org.openide.windows.TopComponent;
  *
  * @author arwillis
  */
-public class UNUSEDTerminalTopComponent extends TopComponent {
+public class TerminalTopComponent extends TopComponent {
 
     private final TerminalContainer tc;
     public MyTerminalSupportImpl mt;
     
-    public UNUSEDTerminalTopComponent() {
+    public TerminalTopComponent() {
         setLayout(new BorderLayout());
-        tc = TerminalContainer.create(UNUSEDTerminalTopComponent.this, "Local");
+        tc = TerminalContainer.create(TerminalTopComponent.this, "Local");
         add(tc, BorderLayout.CENTER);
     }
 

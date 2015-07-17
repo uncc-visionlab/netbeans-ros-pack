@@ -5,6 +5,7 @@
  */
 package org.uncc.netbeans.ros.project;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,11 @@ import org.netbeans.spi.project.support.ant.AntBasedProjectRegistration;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
+import org.openide.nodes.Node;
+import org.openide.nodes.NodeEvent;
+import org.openide.nodes.NodeListener;
+import org.openide.nodes.NodeMemberEvent;
+import org.openide.nodes.NodeReorderEvent;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -42,8 +48,9 @@ import org.openide.util.lookup.Lookups;
         privateName = ROSProject.NAME_PRIVATE,
         privateNamespace = ROSProject.NAME_SPACE_PRIVATE
 )
-public class ROSProject implements Project {
+public class ROSProject implements Project, NodeListener {
 
+    public static String ROS_WORKSPACE_FOLDER = "ros_ws";    
     // Needs to match the <code-name-base> tag from project.xml
     // <code-name-base>org-uncc-netbeans-ros-project</code-name-base>
     // and needs to match the Module line in the Manifest
@@ -107,6 +114,35 @@ public class ROSProject implements Project {
             System.out.println("Could not open Config file");
         }
         return properties.getProperty(propertyName);
+    }
+
+    @Override
+    public void childrenAdded(NodeMemberEvent nme) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        Node[] nodeArray = nme.getDelta();        
+//        for (Node n : nodeArray) {
+//            n.addNodeListener(this);
+//        }
+    }
+
+    @Override
+    public void childrenRemoved(NodeMemberEvent nme) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void childrenReordered(NodeReorderEvent nre) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void nodeDestroyed(NodeEvent ne) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

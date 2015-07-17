@@ -3,47 +3,61 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project.ws;
+package org.uncc.netbeans.ros.project.inactive;
 
-import org.uncc.netbeans.ros.project.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.cnd.makeproject.MakeProject;
 import org.netbeans.spi.project.ui.support.NodeFactory;
 import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.netbeans.spi.project.ui.support.NodeList;
-import org.openide.filesystems.FileAttributeEvent;
-import org.openide.filesystems.FileChangeAdapter;
-import org.openide.filesystems.FileChangeListener;
-import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileRenameEvent;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataFolder.FolderNode;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Children;
+import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.ProxyLookup;
+import org.uncc.netbeans.ros.project.ProjectChildrenFactory;
+import org.uncc.netbeans.ros.project.ROSProject;
+import org.uncc.netbeans.ros.project.ROSProjectLogicalView;
+import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
 
 /**
  *
  * @author arwillis
  */
-@NodeFactory.Registration(projectType = MakeProjectNodeFactory.TYPE, position = 200)
-public class MakeProjectNodeFactory implements NodeFactory {
+@NodeFactory.Registration(projectType = ROSProject.TYPE, position = 200)
+public class ROSNodeFactory implements NodeFactory {
 
-    public static final String TYPE = "org.uncc.netbeans.ros.project.ws";
-    public static String REGISTERED_NODE_LOCATION = "Projects/" + TYPE + "/Nodes";
-    MakeProject p;
-    public MakeProjectNodeFactory() {
+    Project proj;
+    ProjectChildrenFactory childrenFactory;  
+    public ROSNodeFactory() {
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public NodeList createNodes(Project project) {
-//        System.out.println("REGENERATING NODES");
-        p = project.getLookup().lookup(MakeProject.class);
+        ROSProject p = project.getLookup().lookup(ROSProject.class);
         assert p != null;
         FilterFileNodesList fn = new FilterFileNodesList(p) {
+//        return new FilterFileNodesList(p) {
             @Override
             public boolean checkAddOK(FileObject folderFile) {
                 if (folderFile.getName().equals("nbproject")) {
                     // do nothing -- do not add to view
+                    return false;
+                } else if (folderFile.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
+                    // do nothing -- do not add to view
+                    // this node is expanded by the workspace project provider
+                    //
                     return false;
                 } else {
                     return true;
@@ -72,6 +86,7 @@ public class MakeProjectNodeFactory implements NodeFactory {
 //        } catch (DataObjectNotFoundException ex) {
 //            Exceptions.printStackTrace(ex);
 //        }
-        return NodeFactorySupport.fixedNodeList(n1);
+//        return NodeFactorySupport.fixedNodeList(n1);
+        return NodeFactorySupport.fixedNodeList();
     }
 }
