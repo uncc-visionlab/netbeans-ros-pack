@@ -16,6 +16,7 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.tools.ant.module.api.support.ActionUtils;
+import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ActionProvider;
@@ -26,6 +27,7 @@ import org.netbeans.spi.project.support.ant.AntBasedProjectRegistration;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeEvent;
 import org.openide.nodes.NodeListener;
@@ -103,6 +105,40 @@ public class ROSProject implements Project, NodeListener {
         return result;
     }
 
+    public String getPackageName(DataObject context) {
+        String pkgName="";
+        Node objNode = context.getNodeDelegate();
+        String rosWs = getProperty("ros.ws");
+        String rosPkgSrc = "src";
+        FileObject packageParent = getProjectDirectory().getFileObject(rosWs).getFileObject(rosPkgSrc);
+        FileObject invokingFileObj = context.getPrimaryFile();
+        String pathRelToPkgSrc = invokingFileObj.getPath().replace(packageParent.getPath(),"");
+        String[] pkgSubFolderNames = pathRelToPkgSrc.split(File.separator);
+        for (String pkgSubFolderName : pkgSubFolderNames) {
+            if (pkgSubFolderName.length() > 0) {
+                pkgName = pkgSubFolderName;
+                break;
+            }
+        }
+//        FileObject fobj = findPackageThatOwnsNode(objNode);
+        return pkgName;
+    }
+    
+/*        private static FileObject findPackageThatOwnsNode(Node node) {
+        if (node != null) {
+            Project project = node.getLookup().lookup(Project.class);
+            if (project == null) {
+                DataObject dataObject = node.getLookup().lookup(DataObject.class);
+                if (dataObject != null) {
+                    project = FileOwnerQuery.getOwner(dataObject.getPrimaryFile());
+                }
+            }
+            return (project == null) ? findProjectThatOwnsNode(node.getParentNode()) : project;
+        } else {
+            return null;
+        }
+    }
+  */  
     public String getProperty(String propertyName) {
         FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
         Properties properties = new Properties();
