@@ -41,12 +41,10 @@ public final class RoslaunchOpen implements ActionListener {
 
     private final LaunchDataObject context;
     ROSProject project;
-    Project projec;
 
     public RoslaunchOpen(LaunchDataObject context) {
 //        MakeProject p1 = Utilities.actionsGlobalContext().lookup(MakeProject.class);
-        ROSProject p2 = Utilities.actionsGlobalContext().lookup(ROSProject.class);
-        
+        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
         this.context = context;
     }
 
@@ -57,18 +55,19 @@ public final class RoslaunchOpen implements ActionListener {
         String wsFolder = project.getProperty("ros.ws");
         String wsInstallFolder = project.getProperty("ros.ws.install");
 //        String wsSrcFolder = project.getProperty("ros.ws.install");
-        String installSetupPath = ".";
-        if (project.getProjectDirectory().getFileObject(wsFolder).
-                getFileObject(wsInstallFolder).getFileObject("setup.bash") != null) {
-
-        } else {
+        FileObject installFolder = project.getProjectDirectory().getFileObject(wsFolder)
+                .getFileObject(wsInstallFolder);
+        FileObject installSetup = installFolder.getFileObject("setup.bash");
+        if (installSetup == null) {
             // abort the run --> no install directory available
-            installSetupPath = project.getProjectDirectory().getPath() + "/"
-                    + wsFolder + "/" + wsInstallFolder + "/";
+            //installSetupPath = project.getProjectDirectory().getPath() + "/"
+            //        + wsFolder + "/" + wsInstallFolder + "/";
+            return;
         }
-        String projfolder = project.getProjectDirectory().getPath();
-
-        String homeDir = context.getPrimaryFile().getParent().getPath();
+        String installSetupPath = installSetup.getPath();
+        String packageName = project.getPackageName(context);
+//        String homeDir = context.getPrimaryFile().getParent().getPath();
+        String homeDir = project.getProjectDirectory().getPath();
         String actionName = "roscore";
 //        commandList = new String[]{
 //            "source /opt/ros/indigo/setup.bash\n",
@@ -84,10 +83,10 @@ public final class RoslaunchOpen implements ActionListener {
         actionName = "roslaunch";
         String launchfilename = context.getPrimaryFile().getNameExt();
         commandList = new String[]{
-            "source " + rosRootFolder + "setup.bash\n",
-            "source " + installSetupPath + "setup.bash\n",
-            "cd " + homeDir + "\n",
-            "roslaunch " + launchfilename + "\n",
+            "source " + rosRootFolder + "/setup.bash\n",
+            "source " + installSetupPath + "\n",
+//            "cd " + homeDir + "\n",
+            "roslaunch " + packageName + " " + launchfilename + "\n",
             "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();
