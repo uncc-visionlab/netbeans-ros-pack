@@ -11,8 +11,11 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
+import org.openide.util.Utilities;
+import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 //import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
@@ -32,14 +35,17 @@ public final class RqtbagOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final BagDataObject context;
+    ROSProject project;
     
     public RqtbagOpen(BagDataObject context) {
         this.context = context;
+        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
+        String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
         String homeDir = context.getPrimaryFile().getParent().getPath();
         String actionName = "roscore";
 //        commandList = new String[]{
@@ -56,7 +62,7 @@ public final class RqtbagOpen implements ActionListener {
         actionName = "rqt_bag";
         String bagfilename = context.getPrimaryFile().getNameExt();
         commandList = new String[]{
-            "source /opt/ros/indigo/setup.bash\n",
+            "source "+rosRootFolder+"/setup.bash\n",
             "cd "+homeDir+"\n",
             "rqt_bag "+bagfilename+"\n",
             "exit"
