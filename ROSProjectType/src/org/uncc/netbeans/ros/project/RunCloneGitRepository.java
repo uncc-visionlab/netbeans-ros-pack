@@ -6,6 +6,7 @@
 package org.uncc.netbeans.ros.project;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.NAME;
@@ -26,15 +27,21 @@ import org.openide.util.Lookup;
 @ActionReference(path = "Projects/Actions")
 public class RunCloneGitRepository extends AbstractAction implements ContextAwareAction {
 
+    ROSProject project;
     String actionName = "Clone Git Repository";
-    public static String[] cmds = {
-        "source /opt/ros/indigo/setup.bash\n",
-        "cd ros_ws/src\n",
-        "wstool update\n",
-        "exit"
-    };
+    public static String[] cmds;
 
-    public RunCloneGitRepository() {
+    public RunCloneGitRepository(ROSProject project) {
+        this.project = project;
+        String rosRoot = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
+        String rosWorkspace = project.getProperty(ROSProject.ROS_WORKSPACEFOLDER_PROPERTYNAME);
+        String rosSource = project.getProperty(ROSProject.ROS_SOURCEFOLDER_PROPERTYNAME);
+        cmds = new String[]{
+            "source " + rosRoot + "/setup.bash\n",
+            "cd " + rosWorkspace + File.separator + rosSource + "\n",
+            "wstool update\n",
+            "exit"
+        };
     }
 
     public @Override

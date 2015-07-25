@@ -16,7 +16,6 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.tools.ant.module.api.support.ActionUtils;
-import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ActionProvider;
@@ -51,7 +50,14 @@ import org.openide.util.lookup.Lookups;
         privateNamespace = ROSProject.NAME_SPACE_PRIVATE
 )
 public class ROSProject implements Project, NodeListener {
-
+    public static String ROS_MAKE_PROPERTYNAME = "make";
+    public static String ROS_ROOTFOLDER_PROPERTYNAME = "ros.root";
+    public static String ROS_WORKSPACEFOLDER_PROPERTYNAME = "ros.ws";
+    public static String ROS_SOURCEFOLDER_PROPERTYNAME = "ros.ws.src";
+    public static String ROS_BUILDFOLDER_PROPERTYNAME = "ros.ws.build";
+    public static String ROS_INSTALLFOLDER_PROPERTYNAME = "ros.ws.install";
+    
+    
     public static String ROS_WORKSPACE_FOLDER = "ros_ws";    
     // Needs to match the <code-name-base> tag from project.xml
     // <code-name-base>org-uncc-netbeans-ros-project</code-name-base>
@@ -108,8 +114,8 @@ public class ROSProject implements Project, NodeListener {
     public String getPackageName(DataObject context) {
         String pkgName="";
         Node objNode = context.getNodeDelegate();
-        String rosWs = getProperty("ros.ws");
-        String rosPkgSrc = "src";
+        String rosWs = getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
+        String rosPkgSrc = getProperty(ROS_SOURCEFOLDER_PROPERTYNAME);
         FileObject packageParent = getProjectDirectory().getFileObject(rosWs).getFileObject(rosPkgSrc);
         FileObject invokingFileObj = context.getPrimaryFile();
         String pathRelToPkgSrc = invokingFileObj.getPath().replace(packageParent.getPath(),"");

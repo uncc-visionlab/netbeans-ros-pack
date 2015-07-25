@@ -10,21 +10,21 @@ import org.openide.awt.ActionReference;
 
 @ActionID(
         category = "Project",
-        id = "org.uncc.netbeans.ros.project.RunROSCore"
+        id = "org.uncc.netbeans.ros.project.RunRqtGraph"
 )
 @ActionReference(path = "Projects/Actions")
-public class RunROSCore extends TerminalDriverAction {
+public class RunRqtGraph extends TerminalDriverAction {
 
     ROSProject project;
-    public static String[] cmds = null;
-    public static String an = "run roscore";
+    public static String[] cmds;
+    public static String an = "Run rqt_graph";
 
-    public RunROSCore(ROSProject project) {
+    public RunRqtGraph(ROSProject project) {
         this.project = project;
         String rosRoot = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
         cmds = new String[]{
             "source "+rosRoot+"/setup.bash\n",
-            "roscore\n"
+            "rqt_graph\n"
         };
         this.commandList = cmds;
         this.actionName = an;

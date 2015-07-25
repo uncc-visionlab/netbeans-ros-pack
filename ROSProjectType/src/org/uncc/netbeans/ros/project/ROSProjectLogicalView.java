@@ -42,7 +42,6 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
         try {
             //Get the Text directory, creating if deleted
             FileObject text = project.getProjectDirectory();
-//            FileObject text = project.getSubFolder(AntBasedProject.PROJECT_ROS_SRCDIR, true);
             //Get the DataObject that represents it
             DataFolder textDataObject = DataFolder.findFolder(text);
             //Get its default node-we'll wrap our node around it to change the
@@ -98,9 +97,10 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                 CommonProjectActions.copyProjectAction(),
                 CommonProjectActions.deleteProjectAction(),
                 //                CommonProjectActions.setAsMainProjectAction(),
-                new RunROSCore(),
-                new RunRViz(),
-                new RunCloneGitRepository(),
+                new RunROSCore(project),
+                new RunRViz(project),
+                new RunRqtGraph(project),
+                new RunCloneGitRepository(project),
                 CommonProjectActions.closeProjectAction(),
                 CommonProjectActions.setProjectConfigurationAction(),
                 CommonProjectActions.customizeProjectAction()

@@ -15,12 +15,17 @@ import org.openide.awt.ActionReference;
 @ActionReference(path = "Projects/Actions")
 public class RunRViz extends TerminalDriverAction {
 
-    public static String[] cmds = {
-        "source /opt/ros/indigo/setup.bash\n",
-        "rosrun rviz rviz\n"
-    };
+    ROSProject project;
+    public static String[] cmds;
     public static String an = "Run rosrun rviz";
-    public RunRViz() {
+
+    public RunRViz(ROSProject project) {
+        this.project = project;
+        String rosRoot = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
+        cmds = new String[]{
+            "source "+rosRoot+"/setup.bash\n",
+            "rosrun rviz rviz\n"
+        };
         this.commandList = cmds;
         this.actionName = an;
     }
