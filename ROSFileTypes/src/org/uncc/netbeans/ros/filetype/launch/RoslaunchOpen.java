@@ -26,8 +26,8 @@ import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
         displayName = "#CTL_RoslaunchOpen"
 )
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 0),
-    @ActionReference(path = "Loaders/text/x-roslaunch+xml/Actions", position = 0)
+    @ActionReference(path = "Menu/File", position = 250),
+    @ActionReference(path = "Loaders/text/x-roslaunch+xml/Actions", position = 250)
 })
 @NbBundle.Messages({"CTL_RoslaunchOpen=Open with roslaunch/roscore"})
 public final class RoslaunchOpen implements ActionListener {
@@ -48,10 +48,10 @@ public final class RoslaunchOpen implements ActionListener {
         String[] commandList;
         String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
         String wsFolder = project.getProperty(ROSProject.ROS_WORKSPACEFOLDER_PROPERTYNAME);
-        String wsInstallFolder = project.getProperty(ROSProject.ROS_INSTALLFOLDER_PROPERTYNAME);
-        FileObject installFolder = project.getProjectDirectory().getFileObject(wsFolder)
-                .getFileObject(wsInstallFolder);
-        FileObject installSetup = installFolder.getFileObject("setup.bash");
+        String wsDevelFolder = project.getProperty(ROSProject.ROS_DEVELFOLDER_PROPERTYNAME);
+        FileObject develFolder = project.getProjectDirectory().getFileObject(wsFolder)
+                .getFileObject(wsDevelFolder);
+        FileObject installSetup = develFolder.getFileObject("setup.bash");
         if (installSetup == null) {
             // abort the run --> no install directory available
             //installSetupPath = project.getProjectDirectory().getPath() + "/"
