@@ -39,11 +39,11 @@ public class CustomProjectChildrenFactory extends Children.Keys<Object> {
                     if (folderFile.getName().equals("nbproject")) {
                         // do nothing -- do not add to view
                         return false;
-                    } else if (folderFile.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
+//                    } else if (folderFile.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
                         // do nothing -- do not add to view
                         // this node is expanded by the workspace project provider
                         //
-                        return false;
+//                        return false;
                     } else {
                         return true;
                     }

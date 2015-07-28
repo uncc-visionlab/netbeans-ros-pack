@@ -55,10 +55,10 @@ public class ROSProject implements Project, NodeListener {
     public static String ROS_WORKSPACEFOLDER_PROPERTYNAME = "ros.ws";
     public static String ROS_SOURCEFOLDER_PROPERTYNAME = "ros.ws.src";
     public static String ROS_BUILDFOLDER_PROPERTYNAME = "ros.ws.build";
+    public static String ROS_DEVELFOLDER_PROPERTYNAME = "ros.ws.devel";
     public static String ROS_INSTALLFOLDER_PROPERTYNAME = "ros.ws.install";
     
     
-    public static String ROS_WORKSPACE_FOLDER = "ros_ws";    
     // Needs to match the <code-name-base> tag from project.xml
     // <code-name-base>org-uncc-netbeans-ros-project</code-name-base>
     // and needs to match the Module line in the Manifest

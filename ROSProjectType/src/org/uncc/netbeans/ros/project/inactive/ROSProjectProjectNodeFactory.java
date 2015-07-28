@@ -6,7 +6,6 @@
 package org.uncc.netbeans.ros.project.inactive;
 
 import org.uncc.netbeans.ros.project.ROSProjectProjectProvider;
-import org.uncc.netbeans.ros.project.inactive.ROSNodeFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -62,12 +61,12 @@ public class ROSProjectProjectNodeFactory implements NodeFactory {
 //                d.addPropertyChangeListener(this);
                 Node n = d.getNodeDelegate();
 //                n.addNodeListener(ROSProjectProjectNodeFactory.this);
-                if (n instanceof FolderNode && //false &&
-                        n.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
-                    fn = new MakeProjectFilterNode(n, node);
-                } else {
+//                if (n instanceof FolderNode && //false &&
+//                        n.getName().equals(ROSProject.ROS_WORKSPACE_FOLDER)) {
+//                    fn = new MakeProjectFilterNode(n, node);
+//                } else {
                     fn = new FilterNode(n);
-                }
+//                }
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }
