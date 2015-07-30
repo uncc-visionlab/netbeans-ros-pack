@@ -26,6 +26,8 @@ import org.uncc.netbeans.ros.project.RunRViz;
 )
 @ActionReference(path = "Toolbars/Memory", position = 2100)
 @Messages("CTL_RunRVizToolbarButton=Run RViz")
+// Notes on customizing the default toolbar
+// https://anchialas.wordpress.com/2010/08/19/custom-toolbar-configuration/
 public final class RunRVizToolbarButton implements ActionListener {
 
     private final Project context;
