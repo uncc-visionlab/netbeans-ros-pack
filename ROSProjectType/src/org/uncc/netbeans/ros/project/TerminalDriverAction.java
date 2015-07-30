@@ -46,6 +46,14 @@ public class TerminalDriverAction extends AbstractAction implements ContextAware
         return new TerminalDriverAction.TerminalContextAction(context);
     }
 
+    public String[] getCommandList() {
+        return commandList;
+    }
+    
+    public String getName() {
+        return actionName;
+    }
+    
     @Override
     public boolean isEnabled() {
         return false;

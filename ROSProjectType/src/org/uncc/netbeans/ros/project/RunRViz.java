@@ -23,7 +23,7 @@ public class RunRViz extends TerminalDriverAction {
         this.project = project;
         String rosRoot = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
         cmds = new String[]{
-            "source "+rosRoot+"/setup.bash\n",
+            "source " + rosRoot + "/setup.bash\n",
             "rosrun rviz rviz\n"
         };
         this.commandList = cmds;
