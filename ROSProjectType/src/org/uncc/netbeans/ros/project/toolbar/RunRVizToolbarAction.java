@@ -86,6 +86,8 @@ import org.openide.util.actions.Presenter;
 /**
  *
  * @author Martin Entlicher
+ * Derived from:
+ * org.netbeans.modules.debugger.ui.actions.DebugMainProjectAction
  */
 @ActionID(
         category = "Project",
