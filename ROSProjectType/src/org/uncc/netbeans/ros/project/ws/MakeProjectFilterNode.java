@@ -8,11 +8,6 @@ package org.uncc.netbeans.ros.project.ws;
 import java.awt.Image;
 import javax.swing.Action;
 import org.netbeans.api.project.Project;
-import org.openide.filesystems.FileAttributeEvent;
-import org.openide.filesystems.FileChangeListener;
-import org.openide.filesystems.FileEvent;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileRenameEvent;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -64,7 +59,6 @@ public class MakeProjectFilterNode extends FilterNode {
         //                CommonProjectActions.deleteProjectAction(),
         //                CommonProjectActions.setAsMainProjectAction(),
         //            new RunROSCore(),
-        //            new RunRViz(),
         //            new RunCloneGitRepository(), //                CommonProjectActions.closeProjectAction(),
         //                CommonProjectActions.setProjectConfigurationAction(),
         //                CommonProjectActions.customizeProjectAction()

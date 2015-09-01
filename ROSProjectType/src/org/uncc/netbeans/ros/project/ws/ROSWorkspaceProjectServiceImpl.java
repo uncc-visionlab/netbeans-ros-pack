@@ -15,18 +15,18 @@ import org.netbeans.api.project.ProjectUtils;
 
 import org.netbeans.spi.project.ProjectServiceProvider;
 
-@ProjectServiceProvider(service = ROSWorkspaceProjectService.class, 
+@ProjectServiceProvider(service = ROSWorkspaceProjectService.class,
         projectType = "org-netbeans-modules-cnd-makeproject")
 public class ROSWorkspaceProjectServiceImpl extends ROSWorkspaceProjectService {
 
     static {
-        JOptionPane.showMessageDialog(null, "===> loading ServiceImpl");
+//        JOptionPane.showMessageDialog(null, "===> loading ServiceImpl");
     }
     private final Project p;
 
     public ROSWorkspaceProjectServiceImpl(Project p) {
         this.p = p;
-        JOptionPane.showMessageDialog(null, "===> new ServiceImpl on " + p);
+//        JOptionPane.showMessageDialog(null, "===> new ServiceImpl on " + p);
     }
 
     @Override

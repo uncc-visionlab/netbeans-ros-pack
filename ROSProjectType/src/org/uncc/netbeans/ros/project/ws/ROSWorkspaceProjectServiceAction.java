@@ -69,13 +69,13 @@ public final class ROSWorkspaceProjectServiceAction extends AbstractAction imple
 
         public @Override
         void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "===> running action");
+//            JOptionPane.showMessageDialog(null, "===> running action");
             for (Project p : OpenProjects.getDefault().getOpenProjects()) {
                 ROSWorkspaceProjectService s = p.getLookup().lookup(ROSWorkspaceProjectService.class);
                 if (s != null) {
-                    JOptionPane.showMessageDialog(null, "===> got a service: " + s.m());
+//                    JOptionPane.showMessageDialog(null, "===> got a service: " + s.m());
                 } else {
-                    JOptionPane.showMessageDialog(null, "===> nothing for " + p);
+//                    JOptionPane.showMessageDialog(null, "===> nothing for " + p);
                 }
             }
         }

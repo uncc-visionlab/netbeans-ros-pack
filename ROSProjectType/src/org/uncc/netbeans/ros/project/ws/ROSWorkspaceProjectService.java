@@ -10,11 +10,10 @@ package org.uncc.netbeans.ros.project.ws;
  * @author arwillis
  */
 
-import javax.swing.JOptionPane; public abstract class ROSWorkspaceProjectService {
+public abstract class ROSWorkspaceProjectService {
 
-    static {
-        JOptionPane.showMessageDialog(null, "===> loading Service");
-    }
-
+//    static {
+//        JOptionPane.showMessageDialog(null, "===> loading Service");
+//    }
     public abstract String m();
 }

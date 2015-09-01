@@ -27,6 +27,9 @@ import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
 
 import org.openide.util.NbBundle.Messages;
+import org.uncc.netbeans.ros.project.ROSProject;
+import org.uncc.netbeans.ros.project.RunCatkinCreatePackage;
+import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
 //@ActionID(category = "File", id = "org.netbeans.modules.cnd.ROSWorkspaceAction")
 @ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.ROSWorkspaceFileAction")
@@ -49,32 +52,42 @@ public final class MakeProjectAction extends AbstractAction implements ContextAw
     public boolean isEnabled() {
         return false;
     }
-    
+
     private static final class ContextAction extends AbstractAction {
 
-        private final Project p=null;
+        private final ROSProject project;
 
         public ContextAction(Lookup context) {
+            project = context.lookup(ROSProject.class);
             DataObject dobj = context.lookup(DataObject.class);
             Node n = dobj.getNodeDelegate();
             if (n != null && n instanceof FolderNode && n.getName().equals("ros_ws")) {
                 setEnabled(true);
-                putValue(NAME, "Action on Workspace Folder");
+                putValue(NAME, "Create a new package");
             }
             putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);
         }
 
         public @Override
         void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "===> running action");
-            for (Project p : OpenProjects.getDefault().getOpenProjects()) {
-                ROSWorkspaceProjectService s = p.getLookup().lookup(ROSWorkspaceProjectService.class);
-                if (s != null) {
-                    JOptionPane.showMessageDialog(null, "===> got a service: " + s.m());
-                } else {
-                    JOptionPane.showMessageDialog(null, "===> nothing for " + p);
-                }
-            }
+//            JOptionPane.showMessageDialog(null, "===> running action");
+            CreateROSPackageDialog d = new CreateROSPackageDialog(null, "test");
+            d.setVisible(true);
+            String packageName = d.getPackageName();
+            String dependenciesStr = d.getDependencies();
+            System.out.println("Creating package "+packageName+
+                    " with dependencies "+dependenciesStr);
+            RunCatkinCreatePackage job = new RunCatkinCreatePackage(project, 
+                    packageName, dependenciesStr);            
+            job.run(project);
+//            for (Project p : OpenProjects.getDefault().getOpenProjects()) {                
+//                ROSWorkspaceProjectService s = p.getLookup().lookup(ROSWorkspaceProjectService.class);
+//                if (s != null) {
+////                    JOptionPane.showMessageDialog(null, "===> got a service: " + s.m());
+//                } else {
+////                    JOptionPane.showMessageDialog(null, "===> nothing for " + p);
+//                }
+//            }
         }
     }
 }
