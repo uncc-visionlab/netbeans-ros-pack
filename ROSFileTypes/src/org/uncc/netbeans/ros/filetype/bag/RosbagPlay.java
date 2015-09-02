@@ -20,23 +20,23 @@ import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
-        id = "org.uncc.netbeans.ros.filetype.bag.RqtbagOpen"
+        id = "org.uncc.netbeans.ros.filetype.bag.RosbagPlay"
 )
 @ActionRegistration(
-        displayName = "#CTL_RqtbagOpen"
+        displayName = "#CTL_RosbagPlay"
 )
 @ActionReferences({
     @ActionReference(path = "Menu/File", position = 0),
-    @ActionReference(path = "Loaders/application/x-ros-rqt-bag/Actions", position = 0)
+    @ActionReference(path = "Loaders/application/x-ros-rqt-bag/Actions", position = 20)
 })
-@NbBundle.Messages("CTL_RqtbagOpen=Open with rqt_bag/roscore")
-public final class RqtbagOpen implements ActionListener {
+@NbBundle.Messages("CTL_RosbagPlay=Open with rosbag play --clock")
+public final class RosbagPlay implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final BagDataObject context;
     ROSProject project;
     
-    public RqtbagOpen(BagDataObject context) {
+    public RosbagPlay(BagDataObject context) {
         this.context = context;
         project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
     }
@@ -46,12 +46,12 @@ public final class RqtbagOpen implements ActionListener {
         String[] commandList;
         String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
         String homeDir = context.getPrimaryFile().getParent().getPath();
-        String actionName = "rqt_bag";
+        String actionName = "rosbag";
         String bagfilename = context.getPrimaryFile().getNameExt();
         commandList = new String[]{
             "source "+rosRootFolder+"/setup.bash\n",
             "cd "+homeDir+"\n",
-            "rqt_bag "+bagfilename+"\n",
+            "rosbag play -r 1 --clock "+bagfilename+"\n",
             "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();
