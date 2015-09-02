@@ -105,7 +105,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>org.uncc.netbeans.ros.filetype.launch</package>
+            </public-packages>
         </data>
     </configuration>
 </project>
