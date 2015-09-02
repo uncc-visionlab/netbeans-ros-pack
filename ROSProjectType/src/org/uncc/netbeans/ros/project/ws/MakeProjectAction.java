@@ -75,11 +75,14 @@ public final class MakeProjectAction extends AbstractAction implements ContextAw
             d.setVisible(true);
             String packageName = d.getPackageName();
             String dependenciesStr = d.getDependencies();
-            System.out.println("Creating package "+packageName+
-                    " with dependencies "+dependenciesStr);
-            RunCatkinCreatePackage job = new RunCatkinCreatePackage(project, 
-                    packageName, dependenciesStr);            
-            job.run(project);
+            if (packageName != null) {
+                dependenciesStr = (dependenciesStr == null) ? "" : dependenciesStr;
+                System.out.println("Creating package " + packageName
+                        + " with dependencies " + dependenciesStr);
+                RunCatkinCreatePackage job = new RunCatkinCreatePackage(project,
+                        packageName, dependenciesStr);
+                job.run(project);
+            }
 //            for (Project p : OpenProjects.getDefault().getOpenProjects()) {                
 //                ROSWorkspaceProjectService s = p.getLookup().lookup(ROSWorkspaceProjectService.class);
 //                if (s != null) {
