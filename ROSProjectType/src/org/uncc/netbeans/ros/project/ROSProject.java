@@ -50,6 +50,7 @@ import org.openide.util.lookup.Lookups;
         privateNamespace = ROSProject.NAME_SPACE_PRIVATE
 )
 public class ROSProject implements Project, NodeListener {
+
     public static String ROS_MAKE_PROPERTYNAME = "make";
     public static String ROS_ROOTFOLDER_PROPERTYNAME = "ros.root";
     public static String ROS_WORKSPACEFOLDER_PROPERTYNAME = "ros.ws";
@@ -57,8 +58,7 @@ public class ROSProject implements Project, NodeListener {
     public static String ROS_BUILDFOLDER_PROPERTYNAME = "ros.ws.build";
     public static String ROS_DEVELFOLDER_PROPERTYNAME = "ros.ws.devel";
     public static String ROS_INSTALLFOLDER_PROPERTYNAME = "ros.ws.install";
-    
-    
+
     // Needs to match the <code-name-base> tag from project.xml
     // <code-name-base>org-uncc-netbeans-ros-project</code-name-base>
     // and needs to match the Module line in the Manifest
@@ -90,7 +90,7 @@ public class ROSProject implements Project, NodeListener {
             new AntBasedProjectCopyOperation(),
             new AntBasedProjectDeleteOperation(this),
             new ROSProjectPropertiesLookupProvider(this),
-            new ROSProjectProjectProvider(this)            
+            new ROSProjectProjectProvider(this)
         });
     }
 
@@ -112,39 +112,54 @@ public class ROSProject implements Project, NodeListener {
     }
 
     public String getPackageName(DataObject context) {
-        String pkgName="";
+        String pkgName = "";
         Node objNode = context.getNodeDelegate();
         String rosWs = getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
         String rosPkgSrc = getProperty(ROS_SOURCEFOLDER_PROPERTYNAME);
         FileObject packageParent = getProjectDirectory().getFileObject(rosWs).getFileObject(rosPkgSrc);
         FileObject invokingFileObj = context.getPrimaryFile();
-        String pathRelToPkgSrc = invokingFileObj.getPath().replace(packageParent.getPath(),"");
+        String pathRelToPkgSrc = invokingFileObj.getPath().replace(packageParent.getPath(), "");
         String[] pkgSubFolderNames = pathRelToPkgSrc.split(File.separator);
+        boolean foundPackage = false;
         for (String pkgSubFolderName : pkgSubFolderNames) {
-            if (pkgSubFolderName.length() > 0) {
                 pkgName = pkgSubFolderName;
-                break;
-            }
+                packageParent = packageParent.getFileObject(pkgName);
+                if (isROSPackageFolder(packageParent)) {
+                    foundPackage = true;
+                    break;
+                }
         }
-//        FileObject fobj = findPackageThatOwnsNode(objNode);
+        if (!foundPackage) {
+        return null;
+        }
         return pkgName;
     }
-    
-/*        private static FileObject findPackageThatOwnsNode(Node node) {
-        if (node != null) {
-            Project project = node.getLookup().lookup(Project.class);
-            if (project == null) {
-                DataObject dataObject = node.getLookup().lookup(DataObject.class);
-                if (dataObject != null) {
-                    project = FileOwnerQuery.getOwner(dataObject.getPrimaryFile());
-                }
-            }
-            return (project == null) ? findProjectThatOwnsNode(node.getParentNode()) : project;
-        } else {
-            return null;
+
+    boolean isROSPackageFolder(FileObject folder) {
+        if (folder.isFolder() &&
+                folder.getFileObject("CMakeLists.txt") != null &&
+                folder.getFileObject("package.xml") != null) {
+            return true;
         }
+        return false;
     }
-  */  
+
+    /*        private static FileObject findPackageThatOwnsNode(Node node) {
+     if (node != null) {
+     Project project = node.getLookup().lookup(Project.class);
+     if (project == null) {
+     DataObject dataObject = node.getLookup().lookup(DataObject.class);
+     if (dataObject != null) {
+     project = FileOwnerQuery.getOwner(dataObject.getPrimaryFile());
+     }
+     }
+     return (project == null) ? findProjectThatOwnsNode(node.getParentNode()) : project;
+     } else {
+     return null;
+     }
+     }
+     */
+
     public String getProperty(String propertyName) {
         FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
         Properties properties = new Properties();
@@ -186,8 +201,7 @@ public class ROSProject implements Project, NodeListener {
     public void propertyChange(PropertyChangeEvent evt) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
     private final class Info implements ProjectInformation {
 
         @Override
@@ -230,7 +244,7 @@ public class ROSProject implements Project, NodeListener {
             ActionProvider.COMMAND_REBUILD,
             ActionProvider.COMMAND_CLEAN,
             ActionProvider.COMMAND_COMPILE_SINGLE,
-//            ActionProvider.COMMAND_RUN,
+            //            ActionProvider.COMMAND_RUN,
             ActionProvider.COMMAND_RUN_SINGLE
         };
 
@@ -265,7 +279,7 @@ public class ROSProject implements Project, NodeListener {
             if (string.equals(ActionProvider.COMMAND_REBUILD)) {
                 try {
                     FileObject buildImpl = helper.getProjectDirectory().getFileObject("build.xml");
-                    ActionUtils.runTarget(buildImpl, new String[]{"clean","compile"}, null);
+                    ActionUtils.runTarget(buildImpl, new String[]{"clean", "compile"}, null);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
@@ -277,7 +291,7 @@ public class ROSProject implements Project, NodeListener {
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
-            }            
+            }
             if (string.equals(ActionProvider.COMMAND_COMPILE_SINGLE)) {
                 try {
                     FileObject buildImpl = helper.getProjectDirectory().getFileObject("build.xml");
@@ -290,7 +304,7 @@ public class ROSProject implements Project, NodeListener {
                 try {
                     FileObject buildImpl = helper.getProjectDirectory().getFileObject("build.xml");
                     ActionUtils.runTarget(buildImpl, new String[]{"run"}, null);
-                    
+
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
