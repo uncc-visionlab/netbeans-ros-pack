@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.filetype.launch;
+package org.uncc.netbeans.ros.filetype.cfg;
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
+import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 import org.uncc.netbeans.ros.project.ROSProject;
@@ -20,27 +22,25 @@ import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
-        id = "org.uncc.netbeans.ros.filetype.launch.RoslaunchOpen"
+        id = "org.uncc.netbeans.ros.filetype.cfg.CfgOpen"
 )
 @ActionRegistration(
-        displayName = "#CTL_RoslaunchOpen"
+        displayName = "#CTL_CfgOpen"
 )
 @ActionReferences({
-    @ActionReference(path = "Menu/File", position = 250),
-    @ActionReference(path = "Loaders/text/x-roslaunch+xml/Actions", position = 250)
+    @ActionReference(path = "Menu/File", position = 225),
+    @ActionReference(path = "Loaders/text/x-ros-python/Actions", position = 150, separatorBefore = 125)
 })
-@NbBundle.Messages({"CTL_RoslaunchOpen=Open with roslaunch"})
-public final class RoslaunchOpen implements ActionListener {
-
+@NbBundle.Messages("CTL_CfgOpen=Open with rqt_reconfigure")
+public final class CfgOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
-    private final LaunchDataObject context;
+    private final CfgDataObject context;
     ROSProject project;
-
-    public RoslaunchOpen(LaunchDataObject context) {
-//        MakeProject p1 = Utilities.actionsGlobalContext().lookup(MakeProject.class);
-        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
+    
+    public CfgOpen(CfgDataObject context) {
         this.context = context;
+        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
     }
 
     @Override
@@ -58,16 +58,14 @@ public final class RoslaunchOpen implements ActionListener {
             //        + wsFolder + "/" + wsInstallFolder + "/";
             return;
         }
-        String installSetupPath = installSetup.getPath();
-        String packageName = project.getPackageName(context);
-        String homeDir = project.getProjectDirectory().getPath();
-        String actionName = "roscore";
-        actionName = "roslaunch";
-        String launchfilename = context.getPrimaryFile().getNameExt();
+        String installSetupPath = installSetup.getPath();        
+        String homeDir = context.getPrimaryFile().getParent().getPath();
+        String actionName = "rqt_reconfigure";
         commandList = new String[]{
-            "source " + rosRootFolder + "/setup.bash\n",
+            "source "+rosRootFolder+"/setup.bash\n",
             "source " + installSetupPath + "\n",
-            "roslaunch " + packageName + " " + launchfilename + "\n",
+            "cd "+homeDir+"\n",
+            "rosrun rqt_reconfigure rqt_reconfigure"+"\n",
             "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();

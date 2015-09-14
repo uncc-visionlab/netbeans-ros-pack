@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.filetype.srv;
+package org.uncc.netbeans.ros.filetype.cfg;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -18,29 +18,29 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
 @MultiViewElement.Registration(
-        displayName = "#LBL_Srv_VISUAL",
-        iconBase = "org/uncc/netbeans/ros/filetype/srv/service_icon.png",
-        mimeType = "text/x-ros-srv",
+        displayName = "#LBL_Cfg_VISUAL",
+        iconBase = "org/uncc/netbeans/ros/filetype/cfg/dyncfg_icon.png",
+        mimeType = "text/x-ros-python",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
-        preferredID = "SrvVisual",
+        preferredID = "CfgVisual",
         position = 2000
 )
-@Messages("LBL_Srv_VISUAL=ROS Service")
-public final class SrvVisualElement extends JPanel implements MultiViewElement {
+@Messages("LBL_Cfg_VISUAL=ROS Dynamic Reconfigure")
+public final class CfgVisualElement extends JPanel implements MultiViewElement {
 
-    private SrvDataObject obj;
+    private CfgDataObject obj;
     private JToolBar toolbar = new JToolBar();
     private transient MultiViewElementCallback callback;
 
-    public SrvVisualElement(Lookup lkp) {
-        obj = lkp.lookup(SrvDataObject.class);
+    public CfgVisualElement(Lookup lkp) {
+        obj = lkp.lookup(CfgDataObject.class);
         assert obj != null;
         initComponents();
     }
 
     @Override
     public String getName() {
-        return "SrvVisualElement";
+        return "CfgVisualElement";
     }
 
     /**
