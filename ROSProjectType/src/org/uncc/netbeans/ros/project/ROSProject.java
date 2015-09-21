@@ -16,6 +16,7 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.tools.ant.module.api.support.ActionUtils;
+import static org.netbeans.api.project.FileOwnerQuery.getOwner;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ActionProvider;
@@ -35,6 +36,7 @@ import org.openide.nodes.NodeReorderEvent;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -122,23 +124,36 @@ public class ROSProject implements Project, NodeListener {
         String[] pkgSubFolderNames = pathRelToPkgSrc.split(File.separator);
         boolean foundPackage = false;
         for (String pkgSubFolderName : pkgSubFolderNames) {
-                pkgName = pkgSubFolderName;
-                packageParent = packageParent.getFileObject(pkgName);
-                if (isROSPackageFolder(packageParent)) {
-                    foundPackage = true;
-                    break;
-                }
+            pkgName = pkgSubFolderName;
+            packageParent = packageParent.getFileObject(pkgName);
+            if (isROSPackageFolder(packageParent)) {
+                foundPackage = true;
+                break;
+            }
         }
         if (!foundPackage) {
-        return null;
+            return null;
         }
         return pkgName;
     }
 
+    public static ROSProject findROSProject(DataObject context) {
+        FileObject parentFileObject = context.getPrimaryFile();
+        ROSProject p = null;
+        do {
+            parentFileObject = parentFileObject.getParent();
+            Project pVal = getOwner(parentFileObject);
+            if (pVal instanceof ROSProject) {
+                p = (ROSProject) pVal;
+            }
+        }  while (parentFileObject != null && p == null);
+        return p;
+    }
+
     boolean isROSPackageFolder(FileObject folder) {
-        if (folder.isFolder() &&
-                folder.getFileObject("CMakeLists.txt") != null &&
-                folder.getFileObject("package.xml") != null) {
+        if (folder.isFolder()
+                && folder.getFileObject("CMakeLists.txt") != null
+                && folder.getFileObject("package.xml") != null) {
             return true;
         }
         return false;
@@ -159,7 +174,6 @@ public class ROSProject implements Project, NodeListener {
      }
      }
      */
-
     public String getProperty(String propertyName) {
         FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
         Properties properties = new Properties();
