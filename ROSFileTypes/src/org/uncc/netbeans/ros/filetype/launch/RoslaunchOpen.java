@@ -12,6 +12,7 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
@@ -38,8 +39,7 @@ public final class RoslaunchOpen implements ActionListener {
     ROSProject project;
 
     public RoslaunchOpen(LaunchDataObject context) {
-//        MakeProject p1 = Utilities.actionsGlobalContext().lookup(MakeProject.class);
-        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
+        project = ROSProject.findROSProject(context);
         this.context = context;
     }
 
