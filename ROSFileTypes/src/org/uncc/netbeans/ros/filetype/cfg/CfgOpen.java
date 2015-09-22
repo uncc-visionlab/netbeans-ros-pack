@@ -40,7 +40,7 @@ public final class CfgOpen implements ActionListener {
     
     public CfgOpen(CfgDataObject context) {
         this.context = context;
-        project = ROSProject.findROSProject(context);
+        project = ROSProject.findROSProject(context.getPrimaryFile());
     }
 
     @Override

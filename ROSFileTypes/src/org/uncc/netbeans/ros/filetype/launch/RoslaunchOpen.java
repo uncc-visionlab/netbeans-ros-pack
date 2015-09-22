@@ -39,7 +39,7 @@ public final class RoslaunchOpen implements ActionListener {
     ROSProject project;
 
     public RoslaunchOpen(LaunchDataObject context) {
-        project = ROSProject.findROSProject(context);
+        project = ROSProject.findROSProject(context.getPrimaryFile());
         this.context = context;
     }
 

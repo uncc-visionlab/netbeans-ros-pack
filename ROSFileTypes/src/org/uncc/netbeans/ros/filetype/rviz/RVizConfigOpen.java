@@ -32,7 +32,7 @@ public final class RVizConfigOpen implements ActionListener {
 
     public RVizConfigOpen(DataObject context) {
         this.context = context;
-        project = ROSProject.findROSProject(context);
+        project = ROSProject.findROSProject(context.getPrimaryFile());
     }
 
     @Override
