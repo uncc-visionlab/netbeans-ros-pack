@@ -13,29 +13,25 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.NAME;
-import javax.swing.JOptionPane;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.DynamicMenuContent;
-import org.openide.loaders.DataFolder.FolderNode;
 import org.openide.loaders.DataObject;
-import org.openide.nodes.Node;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
-
 import org.openide.util.NbBundle.Messages;
 import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunCatkinCreatePackage;
+import org.uncc.netbeans.ros.project.RunCatkinCleanBuildPackage;
 
 //@ActionID(category = "File", id = "org.netbeans.modules.cnd.ROSWorkspaceAction")
-@ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.ROSWorkspaceFileAction")
-@ActionRegistration(displayName = "#CTL_TestAction1")
+@ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.ROSPkgCleanBuildAction")
+@ActionRegistration(displayName = "#CTL_ROSPkgCleanBuildAction")
 @ActionReference(path = "Loaders/folder/any/Actions", position = 0)
-@Messages("CTL_TestAction1=Actions for MakeProject")
-public final class MakeProjectAction extends AbstractAction implements ContextAwareAction {
+@Messages("CTL_ROSPkgCleanBuildAction=Clean Build this package with catkin_make")
+public final class ROSPkgCleanBuildAction extends AbstractAction implements ContextAwareAction {
+// cd ${project.dir}/${ros.ws}
+// catkin_make --pkg ${package_folder_name} --make-args clean
 
     public @Override
     void actionPerformed(ActionEvent e) {
@@ -55,41 +51,27 @@ public final class MakeProjectAction extends AbstractAction implements ContextAw
     private static final class ContextAction extends AbstractAction {
 
         private final ROSProject project;
+        String packageName;
 
         public ContextAction(Lookup context) {
             DataObject dobj = context.lookup(DataObject.class);
             //Node n = dobj.getNodeDelegate();
             project = ROSProject.findROSProject(dobj.getPrimaryFile());
-            if (ROSProject.isROSWorkspaceFolder(dobj.getPrimaryFile())) {
+            if (ROSProject.isROSPackageFolder(dobj.getPrimaryFile())) {
+                packageName = dobj.getName();
                 setEnabled(true);
-                putValue(NAME, "Create a new package");
+                putValue(NAME, "Clean and Build this package with catkin_make");
             }
             putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);
         }
 
         public @Override
         void actionPerformed(ActionEvent e) {
-//            JOptionPane.showMessageDialog(null, "===> running action");
-            CreateROSPackageDialog d = new CreateROSPackageDialog(null, "test");
-            d.setVisible(true);
-            String packageName = d.getPackageName();
-            String dependenciesStr = d.getDependencies();
             if (packageName != null) {
-                dependenciesStr = (dependenciesStr == null) ? "" : dependenciesStr;
-                System.out.println("Creating package " + packageName
-                        + " with dependencies " + dependenciesStr);
-                RunCatkinCreatePackage job = new RunCatkinCreatePackage(project,
-                        packageName, dependenciesStr);
+                RunCatkinCleanBuildPackage job = new RunCatkinCleanBuildPackage(project,
+                        packageName);
                 job.run(project);
             }
-//            for (Project p : OpenProjects.getDefault().getOpenProjects()) {                
-//                ROSWorkspaceProjectService s = p.getLookup().lookup(ROSWorkspaceProjectService.class);
-//                if (s != null) {
-////                    JOptionPane.showMessageDialog(null, "===> got a service: " + s.m());
-//                } else {
-////                    JOptionPane.showMessageDialog(null, "===> nothing for " + p);
-//                }
-//            }
         }
     }
 }

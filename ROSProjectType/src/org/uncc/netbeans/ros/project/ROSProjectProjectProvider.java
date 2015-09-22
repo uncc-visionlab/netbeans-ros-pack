@@ -16,7 +16,7 @@ import org.netbeans.spi.project.SubprojectProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.netbeans.modules.cnd.makeproject.MakeProject;
-import org.uncc.netbeans.ros.project.ROSProject;
+import org.uncc.netbeans.ros.pkg.ROSPackageProject;
 
 /**
  *
@@ -38,7 +38,6 @@ public class ROSProjectProjectProvider implements SubprojectProvider {
 
     private Set loadProjects(FileObject dir) {
         Set newProjects = new HashSet();
-//        FileObject reportsFolder = dir.getFileObject("ros_ws");
         FileObject reportsFolder = dir;
         if (reportsFolder != null) {
             for (FileObject childFolder : reportsFolder.getChildren()) {
@@ -47,6 +46,9 @@ public class ROSProjectProjectProvider implements SubprojectProvider {
                         Project subp = ProjectManager.getDefault().findProject(childFolder);
                         if (subp != null && subp instanceof MakeProject) {
                             newProjects.add((MakeProject) subp);
+                        }
+                        if (subp != null && subp instanceof ROSPackageProject) {
+                            newProjects.add((ROSPackageProject) subp);                            
                         }
                     }
                 } catch (IOException ex) {

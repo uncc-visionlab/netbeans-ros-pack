@@ -5,7 +5,6 @@
  */
 package org.uncc.netbeans.ros.project;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -29,14 +28,9 @@ import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
-import org.openide.nodes.NodeEvent;
-import org.openide.nodes.NodeListener;
-import org.openide.nodes.NodeMemberEvent;
-import org.openide.nodes.NodeReorderEvent;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
-import org.openide.util.Utilities;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -51,7 +45,7 @@ import org.openide.util.lookup.Lookups;
         privateName = ROSProject.NAME_PRIVATE,
         privateNamespace = ROSProject.NAME_SPACE_PRIVATE
 )
-public class ROSProject implements Project, NodeListener {
+public class ROSProject implements Project {
 
     public static String ROS_MAKE_PROPERTYNAME = "make";
     public static String ROS_ROOTFOLDER_PROPERTYNAME = "ros.root";
@@ -72,8 +66,6 @@ public class ROSProject implements Project, NodeListener {
     public static final String NAME_PRIVATE = "project-private";
     public static final String NAME_SPACE_PRIVATE = "http://visionlab.uncc.edu/ns/ros-project-private/1";
     public static final String ICON_RESOURCE = "org/uncc/netbeans/ros/project/resources/project_icon.png";
-    // TODO Constant moved to project customizer
-//    public static final String PROJECT_ROS_SRCDIR = "ros_ws";
     final AntProjectHelper helper;
 
     public ROSProject(AntProjectHelper helper) {
@@ -101,18 +93,6 @@ public class ROSProject implements Project, NodeListener {
         return helper.getProjectDirectory();
     }
 
-    public FileObject getSubFolder(String foldername, boolean create) {
-        FileObject result = getProjectDirectory().getFileObject(foldername);
-        if (result == null && create) {
-            try {
-                result = getProjectDirectory().createFolder(foldername);
-            } catch (IOException ioe) {
-                Exceptions.printStackTrace(ioe);
-            }
-        }
-        return result;
-    }
-
     public String getPackageName(DataObject context) {
         String pkgName = "";
         Node objNode = context.getNodeDelegate();
@@ -137,20 +117,19 @@ public class ROSProject implements Project, NodeListener {
         return pkgName;
     }
 
-    public static ROSProject findROSProject(DataObject context) {
-        FileObject parentFileObject = context.getPrimaryFile();
+    public static ROSProject findROSProject(FileObject fobj) {
         ROSProject p = null;
         do {
-            parentFileObject = parentFileObject.getParent();
-            Project pVal = getOwner(parentFileObject);
+            fobj = fobj.getParent();
+            Project pVal = getOwner(fobj);
             if (pVal instanceof ROSProject) {
                 p = (ROSProject) pVal;
             }
-        }  while (parentFileObject != null && p == null);
+        } while (fobj != null && p == null);
         return p;
     }
 
-    boolean isROSPackageFolder(FileObject folder) {
+    public static boolean isROSPackageFolder(FileObject folder) {
         if (folder.isFolder()
                 && folder.getFileObject("CMakeLists.txt") != null
                 && folder.getFileObject("package.xml") != null) {
@@ -159,21 +138,13 @@ public class ROSProject implements Project, NodeListener {
         return false;
     }
 
-    /*        private static FileObject findPackageThatOwnsNode(Node node) {
-     if (node != null) {
-     Project project = node.getLookup().lookup(Project.class);
-     if (project == null) {
-     DataObject dataObject = node.getLookup().lookup(DataObject.class);
-     if (dataObject != null) {
-     project = FileOwnerQuery.getOwner(dataObject.getPrimaryFile());
-     }
-     }
-     return (project == null) ? findProjectThatOwnsNode(node.getParentNode()) : project;
-     } else {
-     return null;
-     }
-     }
-     */
+    public static boolean isROSWorkspaceFolder(FileObject folder) {
+        ROSProject project = ROSProject.findROSProject(folder);
+        String rosWs = project.getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
+        FileObject workspaceParent = project.getProjectDirectory().getFileObject(rosWs);
+        return folder.getPath().equals(workspaceParent.getPath());
+    }
+
     public String getProperty(String propertyName) {
         FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
         Properties properties = new Properties();
@@ -185,35 +156,6 @@ public class ROSProject implements Project, NodeListener {
             System.out.println("Could not open Config file");
         }
         return properties.getProperty(propertyName);
-    }
-
-    @Override
-    public void childrenAdded(NodeMemberEvent nme) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        Node[] nodeArray = nme.getDelta();        
-//        for (Node n : nodeArray) {
-//            n.addNodeListener(this);
-//        }
-    }
-
-    @Override
-    public void childrenRemoved(NodeMemberEvent nme) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void childrenReordered(NodeReorderEvent nre) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void nodeDestroyed(NodeEvent ne) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private final class Info implements ProjectInformation {
@@ -425,10 +367,6 @@ public class ROSProject implements Project, NodeListener {
             return new ArrayList<FileObject>();
         }
 
-//        @Override
-//        public List<FileObject> getDataFiles() {
-//            return new ArrayList<FileObject>();
-//        }
         @Override
         public List<FileObject> getDataFiles() {
             List<FileObject> files = new ArrayList<FileObject>();

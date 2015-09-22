@@ -6,6 +6,9 @@
 package org.uncc.netbeans.ros.project;
 
 import org.netbeans.api.project.Project;
+import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -16,12 +19,14 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
+import org.uncc.netbeans.ros.project.ws.ROSPkgFilterNode;
 
 /**
  *
  * @author arwillis
  */
 public class ProjectChildrenFactory extends FilterNode.Children {
+
     Project p;
 
     public ProjectChildrenFactory(Node or) {
@@ -55,24 +60,41 @@ public class ProjectChildrenFactory extends FilterNode.Children {
 
     @Override
     protected Node copyNode(Node n) {
-//        n.addNodeListener((ROSProject)p);
-        if (n.getName().equals("nbproject")) {
-        }
-        if (n.getName().equals("ros_ws")) {
-            try {
-                FilterNode fn = new MakeProjectFilterNode(n, p);
-                return fn;
-            } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
+        DataObject dobj = n.getLookup().lookup(DataObject.class);
+        if (dobj != null && dobj instanceof DataFolder) {
+            FileObject fobj = dobj.getPrimaryFile();
+            ROSProject project = ROSProject.findROSProject(fobj);
+            FileObject nbFolder = project.getProjectDirectory().getFileObject("nbproject");
+            if (fobj.getPath().equals(nbFolder.getPath())) {
+                //  hide the netbeans config folder
+            } else if (ROSProject.isROSWorkspaceFolder(fobj)) {
+                try {
+                    FilterNode fn = new MakeProjectFilterNode(n, p);
+                    return fn;
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            } else if (ROSProject.isROSPackageFolder(fobj)) {
+                try {
+                    FilterNode fn = new ROSPkgFilterNode(n, p);
+                    return fn;
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
         } else {
-            FilterNode fn = new FilterNode(n, new FilterNode.Children(n),
+            FilterNode fn = new FilterNode(n, new ProjectChildrenFactory(p, n),
                     new ProxyLookup(new Lookup[]{
                         Lookups.singleton(p),
                         n.getLookup()}));
             return fn;
         }
-        return n.cloneNode();
+        FilterNode fn = new FilterNode(n, new ProjectChildrenFactory(p, n),
+                new ProxyLookup(new Lookup[]{
+                    Lookups.singleton(p),
+                    n.getLookup()}));
+        return fn;
+//        return n.cloneNode();
     }
 
     @Override
