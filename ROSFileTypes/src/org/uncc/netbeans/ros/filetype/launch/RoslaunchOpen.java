@@ -12,10 +12,8 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataObject;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
-import org.openide.util.Utilities;
 import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 
