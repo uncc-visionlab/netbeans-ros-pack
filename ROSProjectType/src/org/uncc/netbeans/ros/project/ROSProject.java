@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.Icon;
@@ -27,6 +28,7 @@ import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
+import org.openide.modules.ModuleInfo;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
@@ -129,11 +131,26 @@ public class ROSProject implements Project {
         return p;
     }
 
+    public static boolean gradlePluginPresent() {
+        Collection<? extends ModuleInfo> modules = Lookup.getDefault().lookupAll(ModuleInfo.class);
+        for (ModuleInfo mi : modules) {
+            //System.out.println(mi.getDisplayName());
+            if (mi.getDisplayName().contains("Gradle Support")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isROSPackageFolder(FileObject folder) {
         if (folder.isFolder()
                 && folder.getFileObject("CMakeLists.txt") != null
                 && folder.getFileObject("package.xml") != null) {
-            return true;
+            if (gradlePluginPresent() && folder.getFileObject("build.gradle") != null) {
+                return false;
+            } else {
+                return true;
+            }
         }
         return false;
     }

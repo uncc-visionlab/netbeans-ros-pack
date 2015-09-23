@@ -81,7 +81,7 @@ public class ProjectChildrenFactory extends FilterNode.Children {
                 } catch (DataObjectNotFoundException ex) {
                     Exceptions.printStackTrace(ex);
                 }
-            }
+            } 
         } else {
             FilterNode fn = new FilterNode(n, new ProjectChildrenFactory(p, n),
                     new ProxyLookup(new Lookup[]{
