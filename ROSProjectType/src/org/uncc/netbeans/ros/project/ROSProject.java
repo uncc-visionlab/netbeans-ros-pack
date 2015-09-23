@@ -104,19 +104,14 @@ public class ROSProject implements Project {
         FileObject invokingFileObj = context.getPrimaryFile();
         String pathRelToPkgSrc = invokingFileObj.getPath().replace(packageParent.getPath(), "");
         String[] pkgSubFolderNames = pathRelToPkgSrc.split(File.separator);
-        boolean foundPackage = false;
         for (String pkgSubFolderName : pkgSubFolderNames) {
             pkgName = pkgSubFolderName;
             packageParent = packageParent.getFileObject(pkgName);
-            if (isROSPackageFolder(packageParent)) {
-                foundPackage = true;
-                break;
+            if (isValidROSPackageFolder(packageParent)) {
+                return pkgName;
             }
         }
-        if (!foundPackage) {
-            return null;
-        }
-        return pkgName;
+        return null;
     }
 
     public static ROSProject findROSProject(FileObject fobj) {
@@ -142,11 +137,22 @@ public class ROSProject implements Project {
         return false;
     }
 
+    public static boolean isValidROSPackageFolder(FileObject folder) {
+        return isROSPackageFolderPriv(folder, false);
+    }
+
     public static boolean isROSPackageFolder(FileObject folder) {
+        return isROSPackageFolderPriv(folder, true);
+    }
+
+    private static boolean isROSPackageFolderPriv(FileObject folder,
+            boolean checkForGradle) {
         if (folder.isFolder()
                 && folder.getFileObject("CMakeLists.txt") != null
                 && folder.getFileObject("package.xml") != null) {
-            if (gradlePluginPresent() && folder.getFileObject("build.gradle") != null) {
+            if (checkForGradle
+                    && gradlePluginPresent()
+                    && folder.getFileObject("build.gradle") != null) {
                 return false;
             } else {
                 return true;
