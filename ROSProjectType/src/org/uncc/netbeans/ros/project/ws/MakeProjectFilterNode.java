@@ -28,7 +28,7 @@ import org.uncc.netbeans.ros.project.ROSProject;
 public class MakeProjectFilterNode extends FilterNode {
 
     protected static final String IMAGE = "org/netbeans/modules/cnd/makeproject/ui/resources/makeProject.gif";
-    private static Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
+    private static final Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
     Project p;
 
     public MakeProjectFilterNode(Node node, Project project) throws DataObjectNotFoundException {
@@ -40,7 +40,7 @@ public class MakeProjectFilterNode extends FilterNode {
                 //                        MakeProjectNodeFactory.REGISTERED_NODE_LOCATION),
                 new ProxyLookup(new Lookup[]{
                     Lookups.singleton(project),
-                    node.getLookup(),})
+                    node.getLookup()})
         );
         p = project;
     }
@@ -64,16 +64,12 @@ public class MakeProjectFilterNode extends FilterNode {
         //                CommonProjectActions.customizeProjectAction()
         };
         Action[] allActions = new Action[parentActions.length + nodeActions.length];
-        int i = 0;
-        while (i < parentActions.length) {
-            allActions[i] = parentActions[i];
-            i++;
+        int idx = 0;
+        for (Action a : nodeActions) {
+            allActions[idx++] = a;
         }
-        int j = 0;
-        while (j < nodeActions.length) {
-            allActions[i] = nodeActions[j];
-            i++;
-            j++;
+        for (Action a : parentActions) {
+            allActions[idx++] = a;
         }
         return allActions;
     }

@@ -64,6 +64,7 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
     private static final class ProjectNode extends FilterNode {
 
         final ROSProject project;
+        Action[] nActions;
 
         public ProjectNode(Node node, ROSProject project) throws DataObjectNotFoundException {
             super(node,
@@ -78,14 +79,16 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
                     new ProxyLookup(new Lookup[]{
-                        Lookups.singleton(project),
-                        node.getLookup()})
+                        node.getLookup(),
+                        Lookups.singleton(project)})
             );
             this.project = project;
+            nActions = node.getActions(true);
         }
 
         @Override
         public Action[] getActions(boolean arg0) {
+            Action[] parentActions = super.getActions(arg0);
             Action[] nodeActions = new Action[]{
                 CommonProjectActions.newFileAction(),
                 //The 'null' indicates that the default icon will be used:
@@ -105,7 +108,15 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                 CommonProjectActions.setProjectConfigurationAction(),
                 CommonProjectActions.customizeProjectAction()
             };
-            return nodeActions;
+            Action[] allActions = new Action[nodeActions.length + parentActions.length];
+            int idx = 0;
+            for (Action a : nodeActions) {
+                allActions[idx++] = a;
+            }
+            for (Action a : parentActions) {
+                allActions[idx++] = a;
+            }
+            return allActions;
         }
 
         @Override

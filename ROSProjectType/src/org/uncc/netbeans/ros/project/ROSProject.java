@@ -119,13 +119,13 @@ public class ROSProject implements Project {
 
     public static ROSProject findROSProject(FileObject fobj) {
         ROSProject p = null;
-        do {
+        while (fobj.getParent() != null && p == null) {
             fobj = fobj.getParent();
             Project pVal = getOwner(fobj);
             if (pVal instanceof ROSProject) {
                 p = (ROSProject) pVal;
             }
-        } while (fobj != null && p == null);
+        }
         return p;
     }
 
@@ -140,9 +140,12 @@ public class ROSProject implements Project {
 
     public static boolean isROSWorkspaceFolder(FileObject folder) {
         ROSProject project = ROSProject.findROSProject(folder);
-        String rosWs = project.getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
-        FileObject workspaceParent = project.getProjectDirectory().getFileObject(rosWs);
-        return folder.getPath().equals(workspaceParent.getPath());
+        if (project != null) {
+            String rosWs = project.getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
+            FileObject workspaceParent = project.getProjectDirectory().getFileObject(rosWs);
+            return folder.getPath().equals(workspaceParent.getPath());
+        }
+        return false;
     }
 
     public String getProperty(String propertyName) {

@@ -7,7 +7,6 @@ package org.uncc.netbeans.ros.pkg;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,6 +31,7 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
+import org.uncc.netbeans.ros.project.ProjectChildrenFactory;
 import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunCatkinBuildPackage;
 import org.uncc.netbeans.ros.project.RunCatkinCleanBuildPackage;
@@ -132,19 +132,24 @@ public class ROSPackageProject implements Project {
         private final class ProjectNode extends FilterNode {
 
             final ROSPackageProject project;
+            Action[] nActions;
 
             public ProjectNode(Node node, ROSPackageProject project) throws DataObjectNotFoundException {
                 super(node,
-                        new FilterNode.Children(node),
+                        new ProjectChildrenFactory(project, node),
+                        //                        new FilterNode.Children(node));
                         new ProxyLookup(new Lookup[]{
                             Lookups.singleton(project),
-                            node.getLookup()}));
+                            node.getLookup()})
+                );
                 this.project = project;
+                nActions = node.getActions(true);
             }
 
             @Override
             public Action[] getActions(boolean arg0) {
-                return new Action[]{
+                Action[] parentActions = super.getActions(arg0);
+                Action[] nodeActions = new Action[]{
                     CommonProjectActions.newFileAction(),
                     //The 'null' indicates that the default icon will be used:
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
@@ -153,8 +158,16 @@ public class ROSPackageProject implements Project {
                     CommonProjectActions.copyProjectAction(),
                     CommonProjectActions.deleteProjectAction(),
                     CommonProjectActions.closeProjectAction(),
-                    CommonProjectActions.setProjectConfigurationAction(), 
-                };
+                    CommonProjectActions.setProjectConfigurationAction(),};
+                Action[] allActions = new Action[nodeActions.length + parentActions.length];
+                int idx = 0;
+                for (Action a : nodeActions) {
+                    allActions[idx++] = a;
+                }
+                for (Action a : parentActions) {
+                    allActions[idx++] = a;
+                }
+                return allActions;
             }
 
             @Override

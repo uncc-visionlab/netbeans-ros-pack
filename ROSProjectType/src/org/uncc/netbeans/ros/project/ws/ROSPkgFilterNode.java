@@ -9,6 +9,8 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -30,28 +32,27 @@ public class ROSPkgFilterNode extends FilterNode {
 
     @StaticResource()
     protected static final String IMAGE = "org/uncc/netbeans/ros/pkg/package.png";
-    private static Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
+    private static final Image smallImage = ImageUtilities.loadImage(ROSProject.ICON_RESOURCE); // NOI18N
     Project p;
-
     public ROSPkgFilterNode(Node node, Project project) throws DataObjectNotFoundException {
         super(node,
                 // Default child node handler/constructor
                 //                new ProjectChildrenFactory(project, node),
-                new FilterNode.Children(node),
+                new ProjectChildrenFactory(project, node));
+//                new FilterNode.Children(node),
                 //                NodeFactorySupport.createCompositeChildren(project,
                 //                        MakeProjectNodeFactory.REGISTERED_NODE_LOCATION),
-                new ProxyLookup(new Lookup[]{
-                    Lookups.singleton(project),
-                    node.getLookup(),})
-        );
+//                new ProxyLookup(new Lookup[]{
+//                    Lookups.singleton(project),
+//                    node.getLookup(),})
+//        );
         p = project;
     }
 
     @Override
     public Action[] getActions(boolean arg0) {
         Action[] parentActions = super.getActions(arg0);
-        Action[] nodeActions = new Action[]{ 
-        //                CommonProjectActions.newFileAction(),
+        Action[] nodeActions = new Action[]{ //                CommonProjectActions.newFileAction(),
         //                //The 'null' indicates that the default icon will be used:
         //                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
         //                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
