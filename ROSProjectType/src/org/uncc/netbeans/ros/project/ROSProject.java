@@ -96,8 +96,7 @@ public class ROSProject implements Project {
     }
 
     public String getPackageName(DataObject context) {
-        String pkgName = "";
-        Node objNode = context.getNodeDelegate();
+        String pkgName;
         String rosWs = getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
         String rosPkgSrc = getProperty(ROS_SOURCEFOLDER_PROPERTYNAME);
         FileObject packageParent = getProjectDirectory().getFileObject(rosWs).getFileObject(rosPkgSrc);
