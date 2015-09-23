@@ -20,7 +20,6 @@ import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.ws.MakeProjectFilterNode;
 
 /**
  *

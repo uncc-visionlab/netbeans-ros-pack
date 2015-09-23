@@ -64,7 +64,6 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
     private static final class ProjectNode extends FilterNode {
 
         final ROSProject project;
-        Action[] nActions;
 
         public ProjectNode(Node node, ROSProject project) throws DataObjectNotFoundException {
             super(node,
@@ -83,28 +82,21 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                         Lookups.singleton(project)})
             );
             this.project = project;
-            nActions = node.getActions(true);
         }
 
         @Override
         public Action[] getActions(boolean arg0) {
             Action[] parentActions = super.getActions(arg0);
             Action[] nodeActions = new Action[]{
-                CommonProjectActions.newFileAction(),
                 //The 'null' indicates that the default icon will be used:
                 ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
                 ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
                 ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
-                CommonProjectActions.moveProjectAction(),
-                CommonProjectActions.renameProjectAction(),
-                CommonProjectActions.copyProjectAction(),
-                CommonProjectActions.deleteProjectAction(),
-                //                CommonProjectActions.setAsMainProjectAction(),
+                CommonProjectActions.closeProjectAction(),
                 new RunROSCore(project),
                 new RunRViz(project),
                 new RunRqtGraph(project),
                 new RunCloneGitRepository(project),
-                CommonProjectActions.closeProjectAction(),
                 CommonProjectActions.setProjectConfigurationAction(),
                 CommonProjectActions.customizeProjectAction()
             };

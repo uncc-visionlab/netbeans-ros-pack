@@ -30,8 +30,6 @@ import org.uncc.netbeans.ros.project.RunCatkinCleanBuildPackage;
 @ActionReference(path = "Loaders/folder/any/Actions", position = 0)
 @Messages("CTL_ROSPkgCleanBuildAction=Clean Build this package with catkin_make")
 public final class ROSPkgCleanBuildAction extends AbstractAction implements ContextAwareAction {
-// cd ${project.dir}/${ros.ws}
-// catkin_make --pkg ${package_folder_name} --make-args clean
 
     public @Override
     void actionPerformed(ActionEvent e) {

@@ -132,7 +132,6 @@ public class ROSPackageProject implements Project {
         private final class ProjectNode extends FilterNode {
 
             final ROSPackageProject project;
-            Action[] nActions;
 
             public ProjectNode(Node node, ROSPackageProject project) throws DataObjectNotFoundException {
                 super(node,
@@ -143,7 +142,6 @@ public class ROSPackageProject implements Project {
                             node.getLookup()})
                 );
                 this.project = project;
-                nActions = node.getActions(true);
             }
 
             @Override
@@ -155,8 +153,6 @@ public class ROSPackageProject implements Project {
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
-                    CommonProjectActions.copyProjectAction(),
-                    CommonProjectActions.deleteProjectAction(),
                     CommonProjectActions.closeProjectAction(),
                     CommonProjectActions.setProjectConfigurationAction(),};
                 Action[] allActions = new Action[nodeActions.length + parentActions.length];

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.uncc.netbeans.ros.project.ws;
+package org.uncc.netbeans.ros.project.inactive;
 
 import java.awt.Image;
 import javax.swing.Action;
@@ -48,20 +48,10 @@ public class MakeProjectFilterNode extends FilterNode {
     @Override
     public Action[] getActions(boolean arg0) {
         Action[] parentActions = super.getActions(arg0);
-        Action[] nodeActions = new Action[]{ //                CommonProjectActions.newFileAction(),
-        //                //The 'null' indicates that the default icon will be used:
+        Action[] nodeActions = new Action[]{ 
         //                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
         //                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
         //                ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
-        //                CommonProjectActions.moveProjectAction(),
-        //                CommonProjectActions.renameProjectAction(),
-        //                CommonProjectActions.copyProjectAction(),
-        //                CommonProjectActions.deleteProjectAction(),
-        //                CommonProjectActions.setAsMainProjectAction(),
-        //            new RunROSCore(),
-        //            new RunCloneGitRepository(), //                CommonProjectActions.closeProjectAction(),
-        //                CommonProjectActions.setProjectConfigurationAction(),
-        //                CommonProjectActions.customizeProjectAction()
         };
         Action[] allActions = new Action[parentActions.length + nodeActions.length];
         int idx = 0;
@@ -74,38 +64,19 @@ public class MakeProjectFilterNode extends FilterNode {
         return allActions;
     }
 
-//    @Override
-//    public Action[] getActions(boolean arg0) {
-//        return new Action[]{ //            CommonProjectActions.newFileAction(),
-//        //            CommonProjectActions.copyProjectAction(),
-//        //            CommonProjectActions.deleteProjectAction(),
-//        //            CommonProjectActions.closeProjectAction()
-//        };
-//    }
     @Override
     public String getDisplayName() {
         return "workspace";
     }
 
-    //Next, we add icons, for the default state, which is
-    //closed, and the opened state; we will make them the same.
-    //Icons in project logical views are
-    //based on combinations--you must combine the node's own icon
-    //with a distinguishing badge that is merged with it. Here we
-    //first obtain the icon from a data folder, then we add our
-    //badge to it by merging it via a NetBeans API utility method:
     @Override
     public Image getIcon(int type) {
-//        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-//        Image original = root.getNodeDelegate().getIcon(type);
         Image original = ImageUtilities.loadImage(IMAGE);
         return ImageUtilities.mergeImages(original, smallImage, 7, 7);
     }
 
     @Override
     public Image getOpenedIcon(int type) {
-//        DataFolder root = DataFolder.findFolder(FileUtil.getConfigRoot());
-//        Image original = root.getNodeDelegate().getIcon(type);
         Image original = ImageUtilities.loadImage(IMAGE);
         return ImageUtilities.mergeImages(original, smallImage, 7, 7);
     }
