@@ -5,4 +5,43 @@
 <project name="ROS-nbapp" basedir=".">
     <description>Builds the module suite ROS-nbapp.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="ROSProjectType/release/modules/ext/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="-init" depends="suite.-init">
+        <!--Create/Update keystore-->
+        <delete file="${keystore.location}${keystore.name}"/>
+        <mkdir dir="${keystore.location}"/>
+        <echo message="${keystore.location}"/>
+        <genkey alias="${keystore.alias}" storepass="${keystore.password}"
+                dname="${keystore.dname}"
+                keystore="${keystore.location}${keystore.name}"
+                verbose="true" validity="365"/>
+        <!--Update keystore info in projects-->
+        <antcall target="update-keystore-info"/>
+    </target>
+
+    <target name="update-keystore-info">
+        <echo message="${modules}, ${keystore.location}, ${keystore.name}, ${keystore.password}"/>
+        <for list="${modules}" delimiter=":" param="cur" trim="true">
+            <sequential>
+                <echo message="${cur}"/>
+                <mkdir dir="@{cur}/nbproject/"/>
+                <!--Place the information in the properties file-->
+                <propertyfile file="@{cur}/nbproject/project.properties">
+                    <entry  key="keystore" value="../${keystore.location}${keystore.name}"/>
+                    <entry  key="nbm_alias" value="${keystore.alias}"/>
+                </propertyfile>
+                <mkdir dir="@{cur}/nbproject/private/"/>
+                <!--Place the password in the private properties file-->
+                <propertyfile file="@{cur}/nbproject/private/platform-private.properties">
+                    <entry  key="storepass" value="${keystore.password}"/>
+                </propertyfile>
+            </sequential>
+        </for>    
+    </target>    
 </project>
