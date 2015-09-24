@@ -16,7 +16,7 @@
         <!--Create/Update keystore-->
         <delete file="${keystore.location}${keystore.name}"/>
         <mkdir dir="${keystore.location}"/>
-        <echo message="${keystore.location}"/>
+        <!-- <echo message="${keystore.location}"/> -->
         <genkey alias="${keystore.alias}" storepass="${keystore.password}"
                 dname="${keystore.dname}"
                 keystore="${keystore.location}${keystore.name}"
@@ -26,10 +26,10 @@
     </target>
 
     <target name="update-keystore-info">
-        <echo message="${modules}, ${keystore.location}, ${keystore.name}, ${keystore.password}"/>
+        <!-- <echo message="${modules}, ${keystore.location}, ${keystore.name}, ${keystore.password}"/> -->
         <for list="${modules}" delimiter=":" param="cur" trim="true">
             <sequential>
-                <echo message="${cur}"/>
+                <!-- <echo message="${cur}"/> -->
                 <mkdir dir="@{cur}/nbproject/"/>
                 <!--Place the information in the properties file-->
                 <propertyfile file="@{cur}/nbproject/project.properties">
