@@ -24,16 +24,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import static javax.swing.Action.NAME;
-import javax.swing.JOptionPane;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.awt.DynamicMenuContent;
-import org.openide.loaders.DataFolder.FolderNode;
 import org.openide.loaders.DataObject;
-import org.openide.nodes.Node;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
 

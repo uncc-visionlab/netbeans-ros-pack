@@ -116,7 +116,7 @@ public class ROSPackageProject implements Project {
     class ROSPackageProjectLogicalView implements LogicalViewProvider {
 
         @StaticResource()
-        public static final String CUSTOMER_ICON = "org/uncc/netbeans/ros/pkg/package.png";
+        public static final String PACKAGE_ICON = "org/uncc/netbeans/ros/pkg/package.png";
         private final ROSPackageProject project;
 
         public ROSPackageProjectLogicalView(ROSPackageProject project) {
@@ -126,16 +126,16 @@ public class ROSPackageProject implements Project {
         @Override
         public Node createLogicalView() {
             try {
-//Obtain the project directory's node: 
+                //Obtain the project directory's node: 
                 FileObject projectDirectory = project.getProjectDirectory();
                 DataFolder projectFolder = DataFolder.findFolder(projectDirectory);
                 Node nodeOfProjectFolder = projectFolder.getNodeDelegate();
-//Decorate the project directory's node: 
+                //Decorate the project directory's node: 
                 return new ProjectNode(nodeOfProjectFolder, project);
             } catch (DataObjectNotFoundException donfe) {
                 Exceptions.printStackTrace(donfe);
-//Fallback-the directory couldn't be created - 
-//read-only filesystem or something evil happened 
+                //Fallback-the directory couldn't be created - 
+                //read-only filesystem or something evil happened 
                 return new AbstractNode(Children.LEAF);
             }
         }
@@ -147,7 +147,7 @@ public class ROSPackageProject implements Project {
             public ProjectNode(Node node, ROSPackageProject project) throws DataObjectNotFoundException {
                 super(node,
                         new ProjectChildrenFactory(project, node),
-                        //                        new FilterNode.Children(node));
+                        //new FilterNode.Children(node));
                         new ProxyLookup(new Lookup[]{
                             Lookups.singleton(project),
                             node.getLookup()})
@@ -157,15 +157,16 @@ public class ROSPackageProject implements Project {
 
             @Override
             public Action[] getActions(boolean arg0) {
-                Action[] parentActions = super.getActions(arg0);
+                Action[] parentActions = super.getActions(arg0);                
                 Action[] nodeActions = new Action[]{
-                    CommonProjectActions.newFileAction(),
+                    //CommonProjectActions.newFileAction(),
                     //The 'null' indicates that the default icon will be used:
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_BUILD, "Build", null),
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_REBUILD, "Clean and Build", null),
                     ProjectSensitiveActions.projectCommandAction(ActionProvider.COMMAND_CLEAN, "Clean", null),
                     CommonProjectActions.closeProjectAction(),
-                    CommonProjectActions.setProjectConfigurationAction(),};
+                    CommonProjectActions.setProjectConfigurationAction()
+                };
                 Action[] allActions = new Action[nodeActions.length + parentActions.length];
                 int idx = 0;
                 for (Action a : nodeActions) {
@@ -179,7 +180,7 @@ public class ROSPackageProject implements Project {
 
             @Override
             public Image getIcon(int type) {
-                return ImageUtilities.loadImage(CUSTOMER_ICON);
+                return ImageUtilities.loadImage(PACKAGE_ICON);
             }
 
             @Override
@@ -203,10 +204,6 @@ public class ROSPackageProject implements Project {
     private final class ROSPackageActionProvider implements ActionProvider {
 
         private final String[] supported = new String[]{
-            ActionProvider.COMMAND_MOVE,
-            ActionProvider.COMMAND_RENAME,
-            ActionProvider.COMMAND_DELETE,
-            ActionProvider.COMMAND_COPY,
             ActionProvider.COMMAND_BUILD,
             ActionProvider.COMMAND_REBUILD,
             ActionProvider.COMMAND_CLEAN,
@@ -224,18 +221,6 @@ public class ROSPackageProject implements Project {
         public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
             ROSProject p = ROSPackageProject.this.project;
             String packageName = getProjectDirectory().getName();
-            if (string.equalsIgnoreCase(ActionProvider.COMMAND_RENAME)) {
-                DefaultProjectOperations.performDefaultRenameOperation(ROSPackageProject.this, "");
-            }
-            if (string.equalsIgnoreCase(ActionProvider.COMMAND_MOVE)) {
-                DefaultProjectOperations.performDefaultMoveOperation(ROSPackageProject.this);
-            }
-            if (string.equals(ActionProvider.COMMAND_DELETE)) {
-                DefaultProjectOperations.performDefaultDeleteOperation(ROSPackageProject.this);
-            }
-            if (string.equals(ActionProvider.COMMAND_COPY)) {
-                DefaultProjectOperations.performDefaultCopyOperation(ROSPackageProject.this);
-            }
             //Here we find the Ant script and call the target we need!
             if (string.equals(ActionProvider.COMMAND_BUILD)) {
                 if (packageName != null) {
@@ -263,15 +248,7 @@ public class ROSPackageProject implements Project {
 
         @Override
         public boolean isActionEnabled(String command, Lookup lookup) throws IllegalArgumentException {
-            if ((command.equals(ActionProvider.COMMAND_RENAME))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_MOVE))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_DELETE))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_COPY))) {
-                return true;
-            } else if ((command.equals(ActionProvider.COMMAND_BUILD))) {
+            if ((command.equals(ActionProvider.COMMAND_BUILD))) {
                 return true;
             } else if ((command.equals(ActionProvider.COMMAND_REBUILD))) {
                 return true;
