@@ -3,5 +3,4 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.uncc.netbeans.ros.filetype
 OpenIDE-Module-Localizing-Bundle: org/uncc/netbeans/ros/filetype/Bundle.properties
 OpenIDE-Module-Layer: org/uncc/netbeans/ros/filetype/launch/layer.xml
-OpenIDE-Module-Specification-Version: 1.0
 
