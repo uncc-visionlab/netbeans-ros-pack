@@ -29,8 +29,8 @@ import org.openide.util.NbBundle;
 /**
  * Panel just asking for basic info.
  */
-public class ROSProjectWizardPanel implements WizardDescriptor.Panel,
-        WizardDescriptor.ValidatingPanel, WizardDescriptor.FinishablePanel {
+public class ROSProjectWizardPanel implements WizardDescriptor.Panel<WizardDescriptor>,
+        WizardDescriptor.ValidatingPanel<WizardDescriptor>, WizardDescriptor.FinishablePanel<WizardDescriptor> {
 
     private WizardDescriptor wizardDescriptor;
     private ROSProjectPanelVisual component;
@@ -49,7 +49,7 @@ public class ROSProjectWizardPanel implements WizardDescriptor.Panel,
 
     @Override
     public HelpCtx getHelp() {
-        return new HelpCtx(ROSProjectWizardPanel.class);
+        return new HelpCtx("org.uncc.netbeans.modules.rosproject.ROSProjectWizardPanel");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ROSProjectWizardPanel implements WizardDescriptor.Panel,
         return component.valid(wizardDescriptor);
     }
 
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
+    private final Set<ChangeListener> listeners = new HashSet<>(1); // or can use ChangeSupport in NB 6.0
 
     @Override
     public final void addChangeListener(ChangeListener l) {
@@ -77,7 +77,7 @@ public class ROSProjectWizardPanel implements WizardDescriptor.Panel,
     protected final void fireChangeEvent() {
         Set<ChangeListener> ls;
         synchronized (listeners) {
-            ls = new HashSet<ChangeListener>(listeners);
+            ls = new HashSet<>(listeners);
         }
         ChangeEvent ev = new ChangeEvent(this);
         for (ChangeListener l : ls) {
@@ -86,14 +86,14 @@ public class ROSProjectWizardPanel implements WizardDescriptor.Panel,
     }
 
     @Override
-    public void readSettings(Object settings) {
-        wizardDescriptor = (WizardDescriptor) settings;
+    public void readSettings(WizardDescriptor settings) {
+        wizardDescriptor = settings;
         component.read(wizardDescriptor);
     }
 
     @Override
-    public void storeSettings(Object settings) {
-        WizardDescriptor d = (WizardDescriptor) settings;
+    public void storeSettings(WizardDescriptor settings) {
+        WizardDescriptor d = settings;
         component.store(d);
     }
 

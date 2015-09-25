@@ -51,10 +51,10 @@ import org.xml.sax.InputSource;
 // TODO define position attribute
 @TemplateRegistration(folder = "Project/ROS", displayName = "#ROSProject_displayName", description = "ROSProjectDescription.html", iconBase = "org/uncc/netbeans/modules/rosproject/project_icon.png", content = "ROSProjectTemplate.zip")
 @Messages("ROSProject_displayName=ROS Project")
-public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
+public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator<WizardDescriptor> {
 
     private int index;
-    private WizardDescriptor.Panel[] panels;
+    private WizardDescriptor.Panel<WizardDescriptor>[] panels;
     private WizardDescriptor wiz;
 
     public ROSProjectWizardIterator() {
@@ -64,7 +64,7 @@ public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/In
         return new ROSProjectWizardIterator();
     }
 
-    private WizardDescriptor.Panel[] createPanels() {
+    private WizardDescriptor.Panel<WizardDescriptor>[] createPanels() {
         return new WizardDescriptor.Panel[]{
             new ROSProjectWizardPanel(),};
     }
@@ -76,7 +76,7 @@ public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/In
     }
 
     @Override
-    public Set/*<FileObject>*/ instantiate(/*ProgressHandle handle*/) throws IOException {
+    public Set<FileObject> instantiate(/*ProgressHandle handle*/) throws IOException {
         Set<FileObject> resultSet = new LinkedHashSet<FileObject>();
         File dirF = FileUtil.normalizeFile((File) wiz.getProperty("projdir"));
         dirF.mkdirs();
@@ -141,7 +141,7 @@ public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/In
     @Override
     public String name() {
         return MessageFormat.format("{0} of {1}",
-                new Object[]{new Integer(index + 1), new Integer(panels.length)});
+                new Object[]{index + 1, new Integer(panels.length)});
     }
 
     @Override
@@ -171,7 +171,7 @@ public class ROSProjectWizardIterator implements WizardDescriptor./*Progress*/In
     }
 
     @Override
-    public WizardDescriptor.Panel current() {
+    public WizardDescriptor.Panel<WizardDescriptor> current() {
         return panels[index];
     }
 
