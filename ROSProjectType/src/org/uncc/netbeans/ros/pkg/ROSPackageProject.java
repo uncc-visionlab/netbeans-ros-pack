@@ -18,9 +18,12 @@ package org.uncc.netbeans.ros.pkg;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.apache.tools.ant.module.api.support.ActionUtils;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -157,7 +160,7 @@ public class ROSPackageProject implements Project {
 
             @Override
             public Action[] getActions(boolean arg0) {
-                Action[] parentActions = super.getActions(arg0);                
+                Action[] parentActions = super.getActions(arg0);
                 Action[] nodeActions = new Action[]{
                     //CommonProjectActions.newFileAction(),
                     //The 'null' indicates that the default icon will be used:
@@ -219,26 +222,55 @@ public class ROSPackageProject implements Project {
 
         @Override
         public void invokeAction(String string, Lookup lookup) throws IllegalArgumentException {
-            ROSProject p = ROSPackageProject.this.project;
             String packageName = getProjectDirectory().getName();
             //Here we find the Ant script and call the target we need!
             if (string.equals(ActionProvider.COMMAND_BUILD)) {
                 if (packageName != null) {
-                    RunCatkinBuildPackage job = new RunCatkinBuildPackage(project,
-                            packageName);
-                    job.run(project);
+                    try {
+                        Properties props = new Properties();
+                        props.put("nbrospack.tmp.ros.package.name", packageName);
+                        FileObject buildImpl = project.getProjectDirectory().getFileObject("build.xml");
+                        ActionUtils.runTarget(buildImpl, new String[]{"compile-single"}, props);
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
             }
             if (string.equals(ActionProvider.COMMAND_REBUILD)) {
                 if (packageName != null) {
-                    RunCatkinCleanBuildPackage job = new RunCatkinCleanBuildPackage(project,
-                            packageName);
-                    job.run(project);
+                    try {
+                        Properties props = new Properties();
+                        props.put("nbrospack.tmp.ros.package.name", packageName);
+                        FileObject buildImpl = project.getProjectDirectory().getFileObject("build.xml");
+                        ActionUtils.runTarget(buildImpl, new String[]{"clean-single", "compile-single"}, props);
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
                 }
             }
             if (string.equals(ActionProvider.COMMAND_CLEAN)) {
+                if (packageName != null) {
+                    try {
+                        Properties props = new Properties();
+                        props.put("nbrospack.tmp.ros.package.name", packageName);
+                        FileObject buildImpl = project.getProjectDirectory().getFileObject("build.xml");
+                        ActionUtils.runTarget(buildImpl, new String[]{"clean-single"}, props);
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }                
             }
             if (string.equals(ActionProvider.COMMAND_COMPILE_SINGLE)) {
+                if (packageName != null) {
+                    try {
+                        Properties props = new Properties();
+                        props.put("nbrospack.tmp.ros.package.name", packageName);
+                        FileObject buildImpl = project.getProjectDirectory().getFileObject("build.xml");
+                        ActionUtils.runTarget(buildImpl, new String[]{ "compile-single"}, props);
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }                
             }
             if (string.equals(ActionProvider.COMMAND_RUN)) {
             }
@@ -253,9 +285,9 @@ public class ROSPackageProject implements Project {
             } else if ((command.equals(ActionProvider.COMMAND_REBUILD))) {
                 return true;
             } else if ((command.equals(ActionProvider.COMMAND_CLEAN))) {
-                return false;
+                return true;
             } else if ((command.equals(ActionProvider.COMMAND_COMPILE_SINGLE))) {
-                return false;
+                return true;
             } else if ((command.equals(ActionProvider.COMMAND_RUN))) {
                 return false;
             } else if ((command.equals(ActionProvider.COMMAND_RUN_SINGLE))) {

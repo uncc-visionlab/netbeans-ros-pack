@@ -248,14 +248,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>org.netbeans.modules.dlight.terminal.action</package>
-                <package>org.uncc.netbeans.ros.pkg</package>
                 <package>org.uncc.netbeans.ros.project</package>
-                <package>org.uncc.netbeans.ros.project.inactive</package>
-                <package>org.uncc.netbeans.ros.project.nodetree</package>
-                <package>org.uncc.netbeans.ros.project.toolbar</package>
-                <package>org.uncc.netbeans.ros.project.ui</package>
-                <package>org.uncc.netbeans.ros.project.ws</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/ant-contrib-1.0b3.jar</runtime-relative-path>
