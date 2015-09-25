@@ -149,7 +149,7 @@ public class MsgDataObject extends MultiDataObject {
         }
 
         @Override
-        protected boolean createKeys(List list) {
+        protected boolean createKeys(List<String> list) {
             FileObject fObj = dObj.getPrimaryFile();
             try {
                 List<String> dObjContent = fObj.asLines();

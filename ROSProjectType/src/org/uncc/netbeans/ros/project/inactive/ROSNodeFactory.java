@@ -39,7 +39,7 @@ public class ROSNodeFactory implements NodeFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public NodeList createNodes(Project project) {
+    public NodeList<?> createNodes(Project project) {
         ROSProject p = project.getLookup().lookup(ROSProject.class);
         assert p != null;
         FilterFileNodesList fn = new FilterFileNodesList(p) {

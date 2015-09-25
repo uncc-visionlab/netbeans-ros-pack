@@ -41,7 +41,7 @@ import org.uncc.netbeans.ros.project.ROSProject;
 
 //@ActionID(category = "File", id = "org.netbeans.modules.cnd.ROSWorkspaceAction")
 @ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.ROSWorkspaceProjectAction")
-@ActionRegistration(displayName = "#CTL_TestAction")
+@ActionRegistration(displayName = "#CTL_TestAction", lazy = true)
 @ActionReference(path = "Project/Actions", position = 0)
 @Messages("CTL_TestAction=Test")
 public final class ROSWorkspaceProjectServiceAction extends AbstractAction implements ContextAwareAction {

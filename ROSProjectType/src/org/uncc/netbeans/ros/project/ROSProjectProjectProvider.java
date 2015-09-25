@@ -47,8 +47,8 @@ public class ROSProjectProjectProvider implements SubprojectProvider {
         return loadProjects(project.getProjectDirectory());
     }
 
-    private Set loadProjects(FileObject dir) {
-        Set newProjects = new HashSet();
+    private Set<Project> loadProjects(FileObject dir) {
+        Set<Project> newProjects = new HashSet<>();
         FileObject reportsFolder = dir;
         if (reportsFolder != null) {
             for (FileObject childFolder : reportsFolder.getChildren()) {
@@ -62,9 +62,7 @@ public class ROSProjectProjectProvider implements SubprojectProvider {
                             newProjects.add((ROSPackageProject) subp);                            
                         }
                     }
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IllegalArgumentException ex) {
+                } catch (IOException | IllegalArgumentException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }

@@ -66,10 +66,7 @@ import org.openide.util.actions.Presenter;
         category = "Project",
         id = "org.uncc.netbeans.ros.project.toolbar.RunRVizToolbarAction"
 )
-@ActionRegistration(
-//        iconBase = "org/uncc/netbeans/ros/project/toolbar/rviz.png",
-        displayName = "#CTL_RunRVizToolbarAction"
-)
+@ActionRegistration( displayName = "#CTL_RunRVizToolbarAction", lazy = true)
 @ActionReference(path = "Toolbars/Memory", position = 2100)
 @NbBundle.Messages("CTL_RunRVizToolbarAction=Run RViz with Drop-down Options")
 

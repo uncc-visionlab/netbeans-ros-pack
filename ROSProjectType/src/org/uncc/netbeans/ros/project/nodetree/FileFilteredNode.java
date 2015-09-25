@@ -48,10 +48,10 @@ class FileFilteredNode extends FilterNode {
 
         @Override
         protected Node[] createNodes(Node object) {
-            List<Node> result = new ArrayList<Node>();
+            List<Node> result = new ArrayList<>();
 
             for (Node node : super.createNodes(object)) {
-                DataObject dataObject = (DataObject) node.getLookup().lookup(DataObject.class);
+                DataObject dataObject = node.getLookup().lookup(DataObject.class);
 
                 if (dataObject != null) {
                     FileObject fileObject = dataObject.getPrimaryFile();

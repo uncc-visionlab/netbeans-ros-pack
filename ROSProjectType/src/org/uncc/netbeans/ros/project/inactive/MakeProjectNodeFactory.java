@@ -47,7 +47,7 @@ public class MakeProjectNodeFactory implements NodeFactory {
 
     @SuppressWarnings("unchecked")
     @Override
-    public NodeList createNodes(Project project) {
+    public NodeList<?> createNodes(Project project) {
 //        System.out.println("REGENERATING NODES");
         p = project.getLookup().lookup(MakeProject.class);
         assert p != null;
