@@ -37,10 +37,10 @@ import org.uncc.netbeans.ros.project.ROSProject;
 import org.uncc.netbeans.ros.project.RunCatkinCreatePackage;
 
 //@ActionID(category = "File", id = "org.netbeans.modules.cnd.ROSWorkspaceAction")
-@ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.ROSWorkspaceFileAction")
-@ActionRegistration(displayName = "#CTL_TestAction1", lazy = true)
+@ActionID(category = "File", id = "org.uncc.netbeans.ros.project.ws.MakeProjectAction")
+@ActionRegistration(displayName = "#CTL_MakeProjectAction", lazy = true)
 @ActionReference(path = "Loaders/folder/any/Actions", position = 0)
-@Messages("CTL_TestAction1=Actions for MakeProject")
+@Messages("CTL_MakeProjectAction=Create ROS Package")
 public final class MakeProjectAction extends AbstractAction implements ContextAwareAction {
 
     public @Override
