@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.tools.ant.module.api.support.ActionUtils;
 import static org.netbeans.api.project.FileOwnerQuery.getOwner;
 import org.netbeans.api.project.Project;
@@ -45,6 +48,11 @@ import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -107,7 +115,7 @@ public class ROSProject implements Project {
     }
 
     public String getPackageName(DataObject context) {
-        String pkgName;
+        String pkgName = null, xml_pkgName = null;
         String rosWs = getProperty(ROS_WORKSPACEFOLDER_PROPERTYNAME);
         String rosPkgSrc = getProperty(ROS_SOURCEFOLDER_PROPERTYNAME);
         FileObject packageParent = getProjectDirectory().getFileObject(rosWs).getFileObject(rosPkgSrc);
@@ -118,10 +126,46 @@ public class ROSProject implements Project {
             pkgName = pkgSubFolderName;
             packageParent = packageParent.getFileObject(pkgName);
             if (isValidROSPackageFolder(packageParent)) {
-                return pkgName;
+                break;//return pkgName;
             }
         }
-        return null;
+        FileObject package_XML = packageParent.getFileObject("package.xml");
+        if (package_XML == null) {
+            return pkgName;
+        } else {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            Document doc = null;
+            DocumentBuilder dBuilder = null;
+            try {
+                dBuilder = dbFactory.newDocumentBuilder();
+                doc = dBuilder.parse(package_XML.getInputStream());
+            } catch (ParserConfigurationException | SAXException | IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            if (doc != null) {
+                doc.getDocumentElement().normalize();
+                //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+                NodeList nList = doc.getDocumentElement().getChildNodes();
+                for (int temp = 0; temp < nList.getLength(); temp++) {
+                    org.w3c.dom.Node nNode = nList.item(temp);
+                    //System.out.println("\nCurrent Element :" + nNode.getNodeName());
+//                    if (nNode.getNodeType() == org.w3c.dom.Node.TEXT_NODE) {
+//                        System.out.println(nNode.getNodeValue());
+//                    }
+                    if (nNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        if (nNode.getNodeName().equals("name")) {
+                            xml_pkgName = eElement.getFirstChild().getNodeValue();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (xml_pkgName != null) {
+            pkgName = xml_pkgName;
+        }
+        return pkgName;
     }
 
     public static ROSProject findROSProject(FileObject fobj) {
@@ -136,14 +180,17 @@ public class ROSProject implements Project {
         return p;
     }
 
-    public static boolean gradlePluginPresent() {
-        Collection<? extends ModuleInfo> modules = Lookup.getDefault().lookupAll(ModuleInfo.class);
+    public static
+            boolean gradlePluginPresent() {
+        Collection<? extends ModuleInfo> modules = Lookup.getDefault().lookupAll(ModuleInfo.class
+        );
         for (ModuleInfo mi : modules) {
             //System.out.println(mi.getDisplayName());
             if (mi.getDisplayName().contains("Gradle Support")) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -192,6 +239,7 @@ public class ROSProject implements Project {
             System.out.println("Could not open Config file");
         }
         return properties.getProperty(propertyName);
+
     }
 
     private final class Info implements ProjectInformation {
