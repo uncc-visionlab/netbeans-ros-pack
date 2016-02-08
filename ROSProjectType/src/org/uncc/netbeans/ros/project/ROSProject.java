@@ -170,12 +170,12 @@ public class ROSProject implements Project {
 
     public static ROSProject findROSProject(FileObject fobj) {
         ROSProject p = null;
-        while (fobj.getParent() != null && p == null) {
-            fobj = fobj.getParent();
+        while (fobj != null && p == null) {
             Project pVal = getOwner(fobj);
             if (pVal instanceof ROSProject) {
                 p = (ROSProject) pVal;
             }
+            fobj = fobj.getParent();
         }
         return p;
     }

@@ -27,6 +27,7 @@ import org.apache.tools.ant.module.api.support.ActionUtils;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
@@ -55,12 +56,19 @@ public class ROSPackageProject implements Project {
     private final FileObject projectDir;
     private final ProjectState state;
     private Lookup lkp;
-    final ROSProject project;
+    ROSProject project;
 
     ROSPackageProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
-        project = ROSProject.findROSProject(dir);
+        //ProjectManager.mutex().postWriteRequest(...)
+        //project = ROSProject.findROSProject(dir);
+        ProjectManager.mutex().postWriteRequest(new Runnable() {
+            @Override
+            public void run() {
+                project = ROSProject.findROSProject(projectDir);
+            }
+        });
     }
 
     @Override
@@ -152,8 +160,8 @@ public class ROSPackageProject implements Project {
                         new ProjectChildrenFactory(project, node),
                         //new FilterNode.Children(node));
                         new ProxyLookup(new Lookup[]{
-                            Lookups.singleton(project),
-                            node.getLookup()})
+                    Lookups.singleton(project),
+                    node.getLookup()})
                 );
                 this.project = project;
             }
@@ -258,7 +266,7 @@ public class ROSPackageProject implements Project {
                     } catch (IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }
-                }                
+                }
             }
             if (string.equals(ActionProvider.COMMAND_COMPILE_SINGLE)) {
                 if (packageName != null) {
@@ -266,11 +274,11 @@ public class ROSPackageProject implements Project {
                         Properties props = new Properties();
                         props.put("nbrospack.tmp.ros.package.name", packageName);
                         FileObject buildImpl = project.getProjectDirectory().getFileObject("build.xml");
-                        ActionUtils.runTarget(buildImpl, new String[]{ "compile-single"}, props);
+                        ActionUtils.runTarget(buildImpl, new String[]{"compile-single"}, props);
                     } catch (IOException ex) {
                         Exceptions.printStackTrace(ex);
                     }
-                }                
+                }
             }
             if (string.equals(ActionProvider.COMMAND_RUN)) {
             }
