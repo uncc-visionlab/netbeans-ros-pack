@@ -18,6 +18,7 @@ package org.uncc.netbeans.ros.filetype.launch;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -25,8 +26,8 @@ import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
-import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
+import org.uncc.netbeans.ros.terminal.ROSProjectProperties;
+import org.uncc.netbeans.ros.terminal.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
@@ -45,21 +46,24 @@ public final class RoslaunchOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final LaunchDataObject context;
-    ROSProject project;
+    Project project;
 
     public RoslaunchOpen(LaunchDataObject context) {
-        project = ROSProject.findROSProject(context.getPrimaryFile());
+        project = ROSProjectProperties.findProject(context.getPrimaryFile());
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
-        String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
-        String wsFolder = project.getProperty(ROSProject.ROS_WORKSPACEFOLDER_PROPERTYNAME);
-        String wsDevelFolder = project.getProperty(ROSProject.ROS_DEVELFOLDER_PROPERTYNAME);
-        FileObject develFolder = project.getProjectDirectory().getFileObject(wsFolder)
-                .getFileObject(wsDevelFolder);
+        String rosRootFolder = ROSProjectProperties.getProperty(project,
+                ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
+//        String wsFolder = ROSProjectProperties.getProperty(project,
+//                ROSProjectProperties.ROS_WORKSPACEFOLDER_PROPERTYNAME);
+//        String wsDevelFolder = ROSProjectProperties.getProperty(project,
+//                ROSProjectProperties.ROS_DEVELFOLDER_PROPERTYNAME);
+        FileObject develFolder = ROSProjectProperties.getDevelFolder(project);
+
         FileObject installSetup = develFolder.getFileObject("setup.bash");
         if (installSetup == null) {
             // abort the run --> no install directory available
@@ -68,7 +72,7 @@ public final class RoslaunchOpen implements ActionListener {
             return;
         }
         String installSetupPath = installSetup.getPath();
-        String packageName = project.getPackageName(context);
+        String packageName = ROSProjectProperties.getPackageName(project, context);
         String homeDir = project.getProjectDirectory().getPath();
         String actionName = "roscore";
         actionName = "roslaunch";

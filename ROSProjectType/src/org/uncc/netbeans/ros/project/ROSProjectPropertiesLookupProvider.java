@@ -48,7 +48,7 @@ public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
 
     @Override
     public void showCustomizer() {
-        FileObject fobj = project.getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
+        FileObject fobj = project.getProjectDirectory().getFileObject("ros_ws").getFileObject("nbproject").getFileObject("ros.project.properties");
         properties = new Properties();
         try {
             InputStream is = fobj.getInputStream();
@@ -79,7 +79,7 @@ public class ROSProjectPropertiesLookupProvider implements CustomizerProvider {
         public void actionPerformed(ActionEvent e) {
             StatusDisplayer.getDefault().setStatusText("Settings for "
                     + project.getProjectDirectory().getName() + " stored.");
-            FileObject fobj = project.getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
+            FileObject fobj = project.getProjectDirectory().getFileObject("ros_ws").getFileObject("nbproject").getFileObject("ros.project.properties");
             try {
                 OutputStream os = fobj.getOutputStream();
                 properties.store(os,null);

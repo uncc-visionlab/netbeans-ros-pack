@@ -19,6 +19,7 @@ package org.uncc.netbeans.ros.filetype.cfg;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -26,8 +27,8 @@ import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
-import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
+import org.uncc.netbeans.ros.terminal.ROSProjectProperties;
+import org.uncc.netbeans.ros.terminal.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
@@ -45,19 +46,22 @@ public final class CfgOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final CfgDataObject context;
-    ROSProject project;
+    Project project;
     
     public CfgOpen(CfgDataObject context) {
         this.context = context;
-        project = ROSProject.findROSProject(context.getPrimaryFile());
+        project = ROSProjectProperties.findProject(context.getPrimaryFile());
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
-        String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
-        String wsFolder = project.getProperty(ROSProject.ROS_WORKSPACEFOLDER_PROPERTYNAME);
-        String wsDevelFolder = project.getProperty(ROSProject.ROS_DEVELFOLDER_PROPERTYNAME);
+        String rosRootFolder = ROSProjectProperties.getProperty(project, 
+                ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
+        String wsFolder = ROSProjectProperties.getProperty(project,
+                ROSProjectProperties.ROS_WORKSPACEFOLDER_PROPERTYNAME);
+        String wsDevelFolder = ROSProjectProperties.getProperty(project,
+                ROSProjectProperties.ROS_DEVELFOLDER_PROPERTYNAME);
         FileObject develFolder = project.getProjectDirectory().getFileObject(wsFolder)
                 .getFileObject(wsDevelFolder);
         FileObject installSetup = develFolder.getFileObject("setup.bash");

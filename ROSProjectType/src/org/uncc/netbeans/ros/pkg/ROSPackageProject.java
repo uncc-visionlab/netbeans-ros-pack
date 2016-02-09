@@ -32,7 +32,6 @@ import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
-import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.netbeans.spi.project.ui.support.ProjectSensitiveActions;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
@@ -48,8 +47,6 @@ import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 import org.uncc.netbeans.ros.project.ProjectChildrenFactory;
 import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunCatkinBuildPackage;
-import org.uncc.netbeans.ros.project.RunCatkinCleanBuildPackage;
 
 public class ROSPackageProject implements Project {
 

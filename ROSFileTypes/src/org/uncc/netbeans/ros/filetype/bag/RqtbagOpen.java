@@ -18,16 +18,16 @@ package org.uncc.netbeans.ros.filetype.bag;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.netbeans.api.project.Project;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
-import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
-import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
+import org.uncc.netbeans.ros.terminal.ROSProjectProperties;
+import org.uncc.netbeans.ros.terminal.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
@@ -45,17 +45,18 @@ public final class RqtbagOpen implements ActionListener {
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final BagDataObject context;
-    ROSProject project;
+    Project project;
     
     public RqtbagOpen(BagDataObject context) {
         this.context = context;
-        project = Utilities.actionsGlobalContext().lookup(ROSProject.class);
+        project = Utilities.actionsGlobalContext().lookup(Project.class);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
-        String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
+        String rosRootFolder = ROSProjectProperties.getProperty(project, 
+                ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
         String homeDir = context.getPrimaryFile().getParent().getPath();
         String actionName = "rqt_bag";
         String bagfilename = context.getPrimaryFile().getNameExt();

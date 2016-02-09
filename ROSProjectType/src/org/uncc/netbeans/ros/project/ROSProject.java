@@ -229,7 +229,7 @@ public class ROSProject implements Project {
     }
 
     public String getProperty(String propertyName) {
-        FileObject fobj = getProjectDirectory().getFileObject("nbproject").getFileObject("project.properties");
+        FileObject fobj = getProjectDirectory().getFileObject("ros_ws").getFileObject("nbproject").getFileObject("ros.project.properties");
         Properties properties = new Properties();
         try {
             InputStream is = fobj.getInputStream();
@@ -239,7 +239,6 @@ public class ROSProject implements Project {
             System.out.println("Could not open Config file");
         }
         return properties.getProperty(propertyName);
-
     }
 
     private final class Info implements ProjectInformation {

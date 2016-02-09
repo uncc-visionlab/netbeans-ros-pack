@@ -18,13 +18,14 @@ package org.uncc.netbeans.ros.filetype.rviz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.netbeans.api.project.Project;
 import org.openide.loaders.DataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
-import org.uncc.netbeans.ros.project.ROSProject;
-import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
+import org.uncc.netbeans.ros.terminal.ROSProjectProperties;
+import org.uncc.netbeans.ros.terminal.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
@@ -38,17 +39,18 @@ import org.uncc.netbeans.ros.project.RunInNetbeansTerminal;
 public final class RVizConfigOpen implements ActionListener {
 
     private final DataObject context;
-    ROSProject project;
+    Project project;
 
     public RVizConfigOpen(DataObject context) {
         this.context = context;
-        project = ROSProject.findROSProject(context.getPrimaryFile());
+        project = ROSProjectProperties.findProject(context.getPrimaryFile());
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
-        String rosRootFolder = project.getProperty(ROSProject.ROS_ROOTFOLDER_PROPERTYNAME);
+        String rosRootFolder = ROSProjectProperties.getProperty(project, 
+                ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
         String homeDir = context.getPrimaryFile().getParent().getPath();
         String actionName = "roscore";
         actionName = "rqt_bag";
