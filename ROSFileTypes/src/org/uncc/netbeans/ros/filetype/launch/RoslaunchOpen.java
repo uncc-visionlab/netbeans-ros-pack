@@ -19,11 +19,13 @@ package org.uncc.netbeans.ros.filetype.launch;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.cnd.api.remote.RemoteProject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 import org.uncc.netbeans.ros.terminal.ROSProjectProperties;
@@ -56,13 +58,12 @@ public final class RoslaunchOpen implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         String[] commandList;
+        if (project instanceof RemoteProject) {
+            System.out.println("This is a remote project.");
+        }
         String rosRootFolder = ROSProjectProperties.getProperty(project,
                 ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
-//        String wsFolder = ROSProjectProperties.getProperty(project,
-//                ROSProjectProperties.ROS_WORKSPACEFOLDER_PROPERTYNAME);
-//        String wsDevelFolder = ROSProjectProperties.getProperty(project,
-//                ROSProjectProperties.ROS_DEVELFOLDER_PROPERTYNAME);
-        FileObject develFolder = ROSProjectProperties.getDevelFolder(project);
+       FileObject develFolder = ROSProjectProperties.getDevelFolder(project);
 
         FileObject installSetup = develFolder.getFileObject("setup.bash");
         if (installSetup == null) {
@@ -84,6 +85,9 @@ public final class RoslaunchOpen implements ActionListener {
             "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();
-        RunInNetbeansTerminal.runInNewTerminal(actionName, homeDir, commandList);
+        Lookup lookup = context.getLookup();
+        FileObject fo = lookup.lookup(FileObject.class);
+        RunInNetbeansTerminal.runInNewTerminal(fo, actionName, homeDir, commandList);
+//        RunInNetbeansTerminal.runInNewTerminal( actionName, homeDir, commandList);
     }
 }

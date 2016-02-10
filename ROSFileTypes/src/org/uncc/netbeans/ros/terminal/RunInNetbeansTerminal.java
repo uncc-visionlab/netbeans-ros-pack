@@ -19,13 +19,23 @@ package org.uncc.netbeans.ros.terminal;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import javax.swing.SwingUtilities;
 import org.netbeans.lib.terminalemulator.Term;
+import org.netbeans.modules.dlight.api.terminal.TerminalSupport;
+import org.netbeans.modules.dlight.terminal.action.MyRemoteTerminalAction;
 import org.netbeans.modules.dlight.terminal.action.MyTerminalSupportImpl;
+import org.netbeans.modules.dlight.terminal.action.RemoteTerminalAction;
+import org.netbeans.modules.dlight.terminal.action.TerminalSupportImpl;
 import org.netbeans.modules.dlight.terminal.ui.TerminalContainerTopComponent;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironment;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironmentFactory;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileStateInvalidException;
+import org.openide.filesystems.FileSystem;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.IOContainer;
 import org.openide.windows.IOProvider;
@@ -35,33 +45,82 @@ import org.openide.windows.IOProvider;
  * @author arwillis
  */
 public class RunInNetbeansTerminal {
+
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
-    
-    public static void runInNewTerminal(String tabName, String homeDir, String[] commandList) {
-            final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
-//            WindowManager.getDefault().findMode("editor").dockInto(emulator);
-            if (!emulator.isOpened()) {
-                //emulator.open();
-                emulator.requestActive();
+
+    public static void runInNewTerminal(FileObject fo,
+            final String tabName, final String homeDir,
+            final String[] commandList) {
+        final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
+        if (!emulator.isOpened()) {
+            //emulator.open();
+            emulator.requestActive();
+        }
+        final IOContainer ioContainer = emulator.getIOContainer();
+        final IOProvider term = IOProvider.get("Terminal"); // NOI18N
+        // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
+        if (term != null) {
+            final String path = (fo.isFolder()) ? fo.getPath() : fo.getParent().getPath();
+            ExecutionEnvironment env = null;
+            try {
+                FileSystem fileSystem = fo.getFileSystem();
+                Method declaredMethod = fileSystem.getClass().getDeclaredMethod("getExecutionEnvironment"); // NOI18N
+                if (declaredMethod != null) {
+                    declaredMethod.setAccessible(true);
+                    Object invoke = declaredMethod.invoke(fileSystem);
+                    if (invoke instanceof ExecutionEnvironment) {
+                        env = (ExecutionEnvironment) invoke;
+                    }
+                }
+            } catch (FileStateInvalidException | IllegalAccessException |
+                    IllegalArgumentException | InvocationTargetException |
+                    NoSuchMethodException | SecurityException ex) {
             }
-            final IOContainer ioContainer = emulator.getIOContainer();
-            final IOProvider term = IOProvider.get("Terminal"); // NOI18N
-            // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
-            if (term != null) {
-//                ExecutionEnvironment env = ExecutionEnvironmentFactory.createNew("turtlebot", "192.168.0.30",22);
-                ExecutionEnvironment env = ExecutionEnvironmentFactory.getLocal();
-                //ExecutionEnvironment env = ExecutionEnvironmentFactory.createNew("turtlebot", "192.168.0.30");
-                if (env != null) {
-//                    System.out.println("homeDir = "+homeDir);                    
+            if (env == null) {
+                env = ExecutionEnvironmentFactory.getLocal();
+            }
+//            env = new MyRemoteTerminalAction().getEnvironment();
+
+            final ExecutionEnvironment envFinal = env;
+
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
                     final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-                    mt.openTerminalImpl(ioContainer, tabName, env, homeDir, false, false);
-//                final TopComponent[] tcs = WindowManager.getDefault().findMode("editor").getTopComponents();
+                    mt.openTerminalImpl(ioContainer, tabName, envFinal, homeDir, false, true, 0);
                     RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
                             commandList, ioContainer, mt);
                     RP.post(runnable);
                 }
-            }
+            });
+        }
     }
+
+    public static void runInNewTerminal(String tabName, String homeDir, String[] commandList) {
+        final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
+        if (!emulator.isOpened()) {
+            //emulator.open();
+            emulator.requestActive();
+        }
+        final IOContainer ioContainer = emulator.getIOContainer();
+        final IOProvider term = IOProvider.get("Terminal"); // NOI18N
+        // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
+        if (term != null) {
+//            ExecutionEnvironment env = new MyRemoteTerminalAction().getEnvironment();
+            ExecutionEnvironment env = ExecutionEnvironmentFactory.getLocal();
+            if (env != null) {
+//                    System.out.println("homeDir = "+homeDir);                    
+                final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
+//                mt.openTerminalImpl(ioContainer, tabName, env, "/home", false, true, 0);
+                mt.openTerminalImpl(ioContainer, tabName, env, homeDir, false, true, 0);
+                RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
+                        commandList, ioContainer, mt);
+                RP.post(runnable);
+            }
+        }
+    }
+
     static class RunCommandsInTerminal implements Runnable {
 
         String[] commandList = null;
@@ -87,11 +146,11 @@ public class RunInNetbeansTerminal {
 
         private void doWork() {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            Term t = myTerminalImpl.gterm;
+            Term t = myTerminalImpl.getTerminal();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             for (String cmd : commandList) {
                 clipboard.setContents(new StringSelection(cmd), null);
@@ -104,5 +163,5 @@ public class RunInNetbeansTerminal {
             }
         }
     }
-    
+
 }
