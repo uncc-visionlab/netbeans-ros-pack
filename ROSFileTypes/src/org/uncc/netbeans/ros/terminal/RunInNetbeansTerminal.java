@@ -21,6 +21,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.netbeans.lib.terminalemulator.Term;
 import org.netbeans.modules.dlight.api.terminal.TerminalSupport;
@@ -47,10 +52,13 @@ import org.openide.windows.IOProvider;
 public class RunInNetbeansTerminal {
 
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
+    public static String lastPath = "";
 
     public static void runInNewTerminal(FileObject fo,
-            final String tabName, final String homeDir,
-            final String[] commandList) {
+            final String tabName, String homeDir,
+            String[] commandList,
+            boolean useRemotehost) {
+        String fullPath = homeDir;
         final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
         if (!emulator.isOpened()) {
             //emulator.open();
@@ -76,21 +84,49 @@ public class RunInNetbeansTerminal {
                     IllegalArgumentException | InvocationTargetException |
                     NoSuchMethodException | SecurityException ex) {
             }
-            if (env == null) {
+            if (useRemotehost) {
+
+                try {
+                    env = new MyRemoteTerminalAction().getEnvironment();
+                    if (env == null) {
+                        JOptionPane.showMessageDialog(new JFrame(),
+                                "Could not create remote terminal. Check your connection and path.",
+                                "Terminal Creation Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    // Construct a remote instance string from the provided env
+                    // /home/turtlebot/.netbeans/remote/192.168.0.30/visionlab16-pc-Linux-x86_64"
+                    String arch = System.getProperty("os.arch");
+                    arch = (arch.equals("amd64")) ? "x86_64" : arch;
+                    lastPath = "/home/" + env.getUser() + "/.netbeans/remote/"
+                            + env.getHost() + "/"
+                            + InetAddress.getLocalHost().getHostName() + "-"
+                            + System.getProperty("os.name") + "-" + arch;
+                    // prompt the user to enter their name
+                    String remoteDir = JOptionPane.showInputDialog(new JFrame("Remote Project Path"),
+                            "Path:", lastPath);
+                    lastPath = remoteDir;
+                    commandList[1]=remoteDir+commandList[1];
+                    fullPath = lastPath + homeDir;
+                } catch (UnknownHostException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            } else if (env == null) {
                 env = ExecutionEnvironmentFactory.getLocal();
             }
-//            env = new MyRemoteTerminalAction().getEnvironment();
 
             final ExecutionEnvironment envFinal = env;
-
+            final String pathFinal = fullPath;
+            final String[] commandListFinal = commandList;
             SwingUtilities.invokeLater(new Runnable() {
 
                 @Override
                 public void run() {
                     final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-                    mt.openTerminalImpl(ioContainer, tabName, envFinal, homeDir, false, true, 0);
+                    mt.openTerminalImpl(ioContainer, tabName, envFinal, pathFinal, false, true, 0);
                     RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
-                            commandList, ioContainer, mt);
+                            commandListFinal, ioContainer, mt);
                     RP.post(runnable);
                 }
             });

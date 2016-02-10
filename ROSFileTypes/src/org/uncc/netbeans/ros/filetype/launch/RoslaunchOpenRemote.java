@@ -33,24 +33,24 @@ import org.uncc.netbeans.ros.terminal.RunInNetbeansTerminal;
 
 @ActionID(
         category = "File",
-        id = "org.uncc.netbeans.ros.filetype.launch.RoslaunchOpen"
+        id = "org.uncc.netbeans.ros.filetype.launch.RoslaunchOpenRemote"
 )
 @ActionRegistration(
-        displayName = "#CTL_RoslaunchOpen"
+        displayName = "#CTL_RoslaunchOpenRemote"
 )
 @ActionReferences({
     @ActionReference(path = "Menu/File", position = 250),
     @ActionReference(path = "Loaders/text/x-roslaunch+xml/Actions", position = 250)
 })
-@NbBundle.Messages({"CTL_RoslaunchOpen=Open with roslaunch"})
-public final class RoslaunchOpen implements ActionListener {
+@NbBundle.Messages({"CTL_RoslaunchOpenRemote=Open with roslaunch on remote host"})
+public final class RoslaunchOpenRemote implements ActionListener {
 
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
 
     private final LaunchDataObject context;
     Project project;
 
-    public RoslaunchOpen(LaunchDataObject context) {
+    public RoslaunchOpenRemote(LaunchDataObject context) {
         project = ROSProjectProperties.findProject(context.getPrimaryFile());
         this.context = context;
     }
@@ -87,7 +87,7 @@ public final class RoslaunchOpen implements ActionListener {
         String tabName = actionName + " " + ev.getSource().toString();
         Lookup lookup = context.getLookup();
         FileObject fo = lookup.lookup(FileObject.class);
-        RunInNetbeansTerminal.runInNewTerminal(fo, actionName, homeDir, commandList, false);
+        RunInNetbeansTerminal.runInNewTerminal(fo, actionName, homeDir, commandList, true);
 //        RunInNetbeansTerminal.runInNewTerminal( actionName, homeDir, commandList);
     }
 }

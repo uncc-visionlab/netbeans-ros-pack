@@ -204,5 +204,5 @@ public class ROSProjectProperties {
             System.out.println("Could not open config file: ros.project.properties");
         }
         return properties.getProperty(propertyName);
-    }
+    }    
 }

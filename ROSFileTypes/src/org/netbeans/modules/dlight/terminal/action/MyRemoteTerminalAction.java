@@ -42,6 +42,8 @@
 package org.netbeans.modules.dlight.terminal.action;
 
 import java.awt.Dialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.netbeans.modules.dlight.terminal.ui.RemoteInfoDialog;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironment;
 import org.openide.DialogDescriptor;
@@ -69,7 +71,8 @@ public final class MyRemoteTerminalAction extends TerminalAction {
         cfgPanel = new RemoteInfoDialog(System.getProperty("user.name"));
     }
 
-//    @Override
+    String lastHomeDir="";
+    @Override
     public ExecutionEnvironment getEnvironment() {
         String title = NbBundle.getMessage(RemoteTerminalAction.class, "RemoteConnectionTitle");
         cfgPanel.init();
