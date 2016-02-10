@@ -17,11 +17,13 @@
 package org.uncc.netbeans.ros.project;
 
 import java.awt.Image;
+import java.util.ArrayList;
 import javax.swing.Action;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.netbeans.spi.project.ui.support.ProjectSensitiveActions;
+import org.openide.actions.*;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -89,8 +91,8 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                     //NewAction and friends want the original Node's lookup.
                     //Make a merge of both
                     new ProxyLookup(new Lookup[]{
-                        node.getLookup(),
-                        Lookups.singleton(project)})
+                node.getLookup(),
+                Lookups.singleton(project)})
             );
             this.project = project;
         }
@@ -107,28 +109,37 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                 new RunROSCore(project),
                 new RunRViz(project),
                 new RunRqtGraph(project),
-                new RunCloneGitRepository(project),
+                //new RunCloneGitRepository(project),
                 CommonProjectActions.setProjectConfigurationAction(),
                 CommonProjectActions.customizeProjectAction()
             };
-            Action[] allActions = new Action[nodeActions.length + parentActions.length];
+            ArrayList<Action> actionList = new ArrayList();
             int idx = 0;
             for (Action a : nodeActions) {
-                allActions[idx++] = a;
+                if (a != null) {
+                    actionList.add(a);
+                }
             }
             for (Action a : parentActions) {
-                allActions[idx++] = a;
+                if (a != null) {
+                    System.out.println(a.getClass().toString());
+                    if (!(a instanceof org.openide.actions.PropertiesAction)) {
+                        actionList.add(a);
+                    }
+                }
             }
-            return allActions;
+            return (Action[]) actionList.toArray(new Action[0]);
         }
 
         @Override
-        public Image getIcon(int type) {
+        public Image getIcon(int type
+        ) {
             return ImageUtilities.loadImage(ROSProject.ICON_RESOURCE);
         }
 
         @Override
-        public Image getOpenedIcon(int type) {
+        public Image getOpenedIcon(int type
+        ) {
             return getIcon(type);
         }
 

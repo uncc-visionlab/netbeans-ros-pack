@@ -23,9 +23,9 @@ import javax.swing.Action;
 import static javax.swing.Action.NAME;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
-import org.netbeans.modules.git.ui.actions.ContextHolder;
-import org.netbeans.modules.git.ui.clone.CloneAction;
-import org.netbeans.modules.versioning.spi.VCSContext;
+//import org.netbeans.modules.git.ui.actions.ContextHolder;
+//import org.netbeans.modules.git.ui.clone.CloneAction;
+//import org.netbeans.modules.versioning.spi.VCSContext;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.util.ContextAwareAction;
@@ -77,7 +77,7 @@ public class RunCloneGitRepository extends AbstractAction implements ContextAwar
         public GitContextAction(Lookup context) {
             p = context.lookup(Project.class);
             String name = ProjectUtils.getInformation(p).getDisplayName();
-            if (p instanceof ROSProject) {
+            if (p instanceof ROSProject && false) {
                 setEnabled(true);
                 putValue(NAME, actionName);
             }
@@ -85,7 +85,7 @@ public class RunCloneGitRepository extends AbstractAction implements ContextAwar
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            new CloneAction(new ContextHolder(VCSContext.EMPTY)).actionPerformed(e);
+//            new CloneAction(new ContextHolder(VCSContext.EMPTY)).actionPerformed(e);
 //            UNUSEDRunGetGitRepository runws = new UNUSEDRunGetGitRepository();
 //            String homeDir = p.getProjectDirectory().getPath();
 //            RunInNetbeansTerminal.runInNewTerminal(actionName, homeDir, cmds);
