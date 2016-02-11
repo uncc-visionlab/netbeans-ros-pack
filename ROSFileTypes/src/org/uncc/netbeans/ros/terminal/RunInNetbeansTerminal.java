@@ -52,40 +52,45 @@ import org.openide.windows.IOProvider;
 public class RunInNetbeansTerminal {
 
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
-    public static String lastPath = "";
+    private static String lastPath = "";
 
-    public static void runInNewTerminal(FileObject fo,
+    public static void runInNewTerminal(ExecutionEnvironment env,
             final String tabName, String homeDir,
-            String[] commandList,
-            boolean useRemotehost) {
-        String fullPath = homeDir;
+            String[] commandList) {
         final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
         if (!emulator.isOpened()) {
             //emulator.open();
             emulator.requestActive();
         }
         final IOContainer ioContainer = emulator.getIOContainer();
+        final ExecutionEnvironment envFinal = env;
+        String fullPath = homeDir;
+        final String pathFinal = fullPath;
+        final String[] commandListFinal = commandList;
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
+                mt.openTerminalImpl(ioContainer, tabName, envFinal, pathFinal, false, true, 0);
+                RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
+                        commandListFinal, ioContainer, mt);
+                RP.post(runnable);
+            }
+        });
+    }
+
+    public static String getRemoteProjectPath() {
+        return lastPath;
+    }
+    
+    public static ExecutionEnvironment getExecutionEnvironment(boolean useRemotehost) {
+        ExecutionEnvironment env = null;
+        // ensure a terminal is available 
         final IOProvider term = IOProvider.get("Terminal"); // NOI18N
         // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
         if (term != null) {
-            final String path = (fo.isFolder()) ? fo.getPath() : fo.getParent().getPath();
-            ExecutionEnvironment env = null;
-            try {
-                FileSystem fileSystem = fo.getFileSystem();
-                Method declaredMethod = fileSystem.getClass().getDeclaredMethod("getExecutionEnvironment"); // NOI18N
-                if (declaredMethod != null) {
-                    declaredMethod.setAccessible(true);
-                    Object invoke = declaredMethod.invoke(fileSystem);
-                    if (invoke instanceof ExecutionEnvironment) {
-                        env = (ExecutionEnvironment) invoke;
-                    }
-                }
-            } catch (FileStateInvalidException | IllegalAccessException |
-                    IllegalArgumentException | InvocationTargetException |
-                    NoSuchMethodException | SecurityException ex) {
-            }
             if (useRemotehost) {
-
                 try {
                     env = new MyRemoteTerminalAction().getEnvironment();
                     if (env == null) {
@@ -93,9 +98,9 @@ public class RunInNetbeansTerminal {
                                 "Could not create remote terminal. Check your connection and path.",
                                 "Terminal Creation Error",
                                 JOptionPane.ERROR_MESSAGE);
-                        return;
+                        return null;
                     }
-                    // Construct a remote instance string from the provided env
+                    // Construct a remote instance string from the provided env, e.g.,
                     // /home/turtlebot/.netbeans/remote/192.168.0.30/visionlab16-pc-Linux-x86_64"
                     String arch = System.getProperty("os.arch");
                     arch = (arch.equals("amd64")) ? "x86_64" : arch;
@@ -107,30 +112,14 @@ public class RunInNetbeansTerminal {
                     String remoteDir = JOptionPane.showInputDialog(new JFrame("Remote Project Path"),
                             "Path:", lastPath);
                     lastPath = remoteDir;
-                    commandList[1]=remoteDir+commandList[1];
-                    fullPath = lastPath + homeDir;
                 } catch (UnknownHostException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             } else if (env == null) {
                 env = ExecutionEnvironmentFactory.getLocal();
             }
-
-            final ExecutionEnvironment envFinal = env;
-            final String pathFinal = fullPath;
-            final String[] commandListFinal = commandList;
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-                    mt.openTerminalImpl(ioContainer, tabName, envFinal, pathFinal, false, true, 0);
-                    RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
-                            commandListFinal, ioContainer, mt);
-                    RP.post(runnable);
-                }
-            });
         }
+        return env;
     }
 
     public static void runInNewTerminal(String tabName, String homeDir, String[] commandList) {

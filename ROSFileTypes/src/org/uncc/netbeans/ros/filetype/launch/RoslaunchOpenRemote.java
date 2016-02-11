@@ -18,7 +18,11 @@ package org.uncc.netbeans.ros.filetype.launch;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.nativeexecution.api.ExecutionEnvironment;
+import org.netbeans.modules.nativeexecution.api.NativeProcessBuilder;
 //import org.netbeans.modules.cnd.api.remote.RemoteProject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -63,31 +67,36 @@ public final class RoslaunchOpenRemote implements ActionListener {
 //        }
         String rosRootFolder = ROSProjectProperties.getProperty(project,
                 ROSProjectProperties.ROS_ROOTFOLDER_PROPERTYNAME);
-       FileObject develFolder = ROSProjectProperties.getDevelFolder(project);
-
+        FileObject develFolder = ROSProjectProperties.getDevelFolder(project);
         FileObject installSetup = develFolder.getFileObject("setup.bash");
         if (installSetup == null) {
             // abort the run --> no install directory available
-            //installSetupPath = project.getProjectDirectory().getPath() + "/"
-            //        + wsFolder + "/" + wsInstallFolder + "/";
+            JOptionPane.showMessageDialog(new JFrame(),
+                    "Could not find file setup.bash in devel folder.",
+                    "Launch File Run Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
         String installSetupPath = installSetup.getPath();
         String packageName = ROSProjectProperties.getPackageName(project, context);
         String homeDir = project.getProjectDirectory().getPath();
-        String actionName = "roscore";
-        actionName = "roslaunch";
+        ExecutionEnvironment env = RunInNetbeansTerminal.getExecutionEnvironment(true);
+        String remoteProjectPath = RunInNetbeansTerminal.getRemoteProjectPath();
+        // add an environment variable this way
+//        NativeProcessBuilder npb = NativeProcessBuilder.newProcessBuilder(env);
+//        npb.getEnvironment().put("SILLY_TEST_VARNAME", "SILLY_TEST_VARVALUE");// NOI18N
+        String actionName = "roslaunch";
+        homeDir = remoteProjectPath+homeDir;
         String launchfilename = context.getPrimaryFile().getNameExt();
         commandList = new String[]{
             "source " + rosRootFolder + "/setup.bash\n",
-            "source " + installSetupPath + "\n",
+            "source " + remoteProjectPath+installSetupPath + "\n",
             "roslaunch " + packageName + " " + launchfilename + "\n",
-            "exit"
+//            "exit"
         };
         String tabName = actionName + " " + ev.getSource().toString();
         Lookup lookup = context.getLookup();
         FileObject fo = lookup.lookup(FileObject.class);
-        RunInNetbeansTerminal.runInNewTerminal(fo, actionName, homeDir, commandList, true);
-//        RunInNetbeansTerminal.runInNewTerminal( actionName, homeDir, commandList);
+        RunInNetbeansTerminal.runInNewTerminal( env, actionName, homeDir, commandList);
     }
 }

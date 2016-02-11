@@ -195,6 +195,8 @@ public class ROSProjectProperties {
         if (fobj == null) {
             fobj = p.getProjectDirectory().getFileObject("nbproject").getFileObject("ros.project.properties");
         }
+        if (fobj == null) 
+            return null;
         Properties properties = new Properties();
         try {
             InputStream is = fobj.getInputStream();

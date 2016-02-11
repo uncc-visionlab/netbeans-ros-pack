@@ -84,10 +84,6 @@ public final class RoslaunchOpen implements ActionListener {
             "roslaunch " + packageName + " " + launchfilename + "\n",
             "exit"
         };
-        String tabName = actionName + " " + ev.getSource().toString();
-        Lookup lookup = context.getLookup();
-        FileObject fo = lookup.lookup(FileObject.class);
-        RunInNetbeansTerminal.runInNewTerminal(fo, actionName, homeDir, commandList, false);
-//        RunInNetbeansTerminal.runInNewTerminal( actionName, homeDir, commandList);
+        RunInNetbeansTerminal.runInNewTerminal( actionName, homeDir, commandList);
     }
 }
