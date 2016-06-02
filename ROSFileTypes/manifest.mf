@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: org.uncc.netbeans.ros.filetype/1
-OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Implementation-Version: 2
 OpenIDE-Module-Localizing-Bundle: org/uncc/netbeans/ros/filetype/Bundle.properties
 OpenIDE-Module-Layer: org/uncc/netbeans/ros/filetype/launch/layer.xml
 
