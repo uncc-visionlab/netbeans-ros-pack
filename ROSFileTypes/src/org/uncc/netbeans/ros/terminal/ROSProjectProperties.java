@@ -130,7 +130,7 @@ public class ROSProjectProperties {
             // class ROSPackageProject
             if (pVal instanceof Project && 
                     pVal.getProjectDirectory().getFileObject("nbproject") != null) {
-                p = (Project) pVal;
+                p = pVal;
             }
             fobj = fobj.getParent();
         }

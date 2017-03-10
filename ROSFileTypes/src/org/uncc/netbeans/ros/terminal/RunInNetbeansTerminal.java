@@ -16,34 +16,27 @@
  */
 package org.uncc.netbeans.ros.terminal;
 
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.awt.event.KeyEvent;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import javax.swing.JDialog;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.netbeans.lib.terminalemulator.Term;
 import org.netbeans.modules.dlight.api.terminal.TerminalSupport;
 import org.netbeans.modules.dlight.terminal.action.MyRemoteTerminalAction;
-import org.netbeans.modules.dlight.terminal.action.MyTerminalSupportImpl;
-import org.netbeans.modules.dlight.terminal.action.RemoteTerminalAction;
-import org.netbeans.modules.dlight.terminal.action.TerminalSupportImpl;
 import org.netbeans.modules.dlight.terminal.ui.TerminalContainerTopComponent;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironment;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironmentFactory;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileStateInvalidException;
-import org.openide.filesystems.FileSystem;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.IOContainer;
 import org.openide.windows.IOProvider;
+import org.openide.windows.WindowManager;
 
 /**
  *
@@ -71,10 +64,12 @@ public class RunInNetbeansTerminal {
 
             @Override
             public void run() {
-                final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-                mt.openTerminalImpl(ioContainer, tabName, envFinal, pathFinal, false, true, 0);
+//                    System.out.println("homeDir = "+homeDir);
+                TerminalSupport.openTerminal(ioContainer, tabName, envFinal, pathFinal);
+                JComponent jc = ioContainer.getSelected();
+                jc.requestFocusInWindow();
                 RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
-                        commandListFinal, ioContainer, mt);
+                        commandListFinal, ioContainer);
                 RP.post(runnable);
             }
         });
@@ -83,7 +78,7 @@ public class RunInNetbeansTerminal {
     public static String getRemoteProjectPath() {
         return lastPath;
     }
-    
+
     public static ExecutionEnvironment getExecutionEnvironment(boolean useRemotehost) {
         ExecutionEnvironment env = null;
         // ensure a terminal is available 
@@ -132,15 +127,14 @@ public class RunInNetbeansTerminal {
         final IOProvider term = IOProvider.get("Terminal"); // NOI18N
         // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
         if (term != null) {
-//            ExecutionEnvironment env = new MyRemoteTerminalAction().getEnvironment();
             ExecutionEnvironment env = ExecutionEnvironmentFactory.getLocal();
             if (env != null) {
 //                    System.out.println("homeDir = "+homeDir);                    
-                final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-//                mt.openTerminalImpl(ioContainer, tabName, env, "/home", false, true, 0);
-                mt.openTerminalImpl(ioContainer, tabName, env, homeDir, false, true, 0);
+                TerminalSupport.openTerminal(ioContainer, tabName, env, homeDir);
+                JComponent jc = ioContainer.getSelected();
+                jc.requestFocusInWindow();
                 RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
-                        commandList, ioContainer, mt);
+                        commandList, ioContainer);
                 RP.post(runnable);
             }
         }
@@ -150,14 +144,11 @@ public class RunInNetbeansTerminal {
 
         String[] commandList = null;
         IOContainer ioContainer;
-        MyTerminalSupportImpl myTerminalImpl;
 
         public RunCommandsInTerminal(String[] commandList,
-                IOContainer ioContainer,
-                MyTerminalSupportImpl myTerminalImpl) {
+                IOContainer ioContainer) {
             this.commandList = commandList;
             this.ioContainer = ioContainer;
-            this.myTerminalImpl = myTerminalImpl;
         }
 
         @Override
@@ -170,21 +161,38 @@ public class RunInNetbeansTerminal {
         }
 
         private void doWork() {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            Term t = myTerminalImpl.getTerminal();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            //clipboard.setContents(new StringSelection(commandList[0]), null);
             for (String cmd : commandList) {
-                clipboard.setContents(new StringSelection(cmd), null);
-                t.pasteFromClipboard();
+                //System.out.print(cmd);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ex) {
                     Exceptions.printStackTrace(ex);
                 }
+                clipboard.setContents(new StringSelection(cmd), null);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Robot robot = new Robot();
+                            robot.keyPress(KeyEvent.VK_CONTROL);
+                            robot.keyPress(KeyEvent.VK_SHIFT);
+                            robot.keyPress(KeyEvent.VK_V);
+                            robot.keyRelease(KeyEvent.VK_V);
+                            robot.keyRelease(KeyEvent.VK_SHIFT);
+                            robot.keyRelease(KeyEvent.VK_CONTROL);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
         }
     }
