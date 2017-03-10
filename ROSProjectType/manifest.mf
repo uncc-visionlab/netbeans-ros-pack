@@ -1,5 +1,5 @@
 Manifest-Version: 1
 OpenIDE-Module: org.uncc.netbeans.ros.project/1
-OpenIDE-Module-Implementation-Version: 1
+OpenIDE-Module-Implementation-Version: 2
 OpenIDE-Module-Localizing-Bundle: org/uncc/netbeans/ros/project/Bundle.properties
 

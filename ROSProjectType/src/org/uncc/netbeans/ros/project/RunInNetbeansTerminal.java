@@ -16,12 +16,14 @@
  */
 package org.uncc.netbeans.ros.project;
 
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.netbeans.lib.terminalemulator.Term;
-import org.netbeans.modules.dlight.terminal.action.MyTerminalSupportImpl;
+import org.netbeans.modules.dlight.api.terminal.TerminalSupport;
 import org.netbeans.modules.dlight.terminal.ui.TerminalContainerTopComponent;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironment;
 import org.netbeans.modules.nativeexecution.api.ExecutionEnvironmentFactory;
@@ -29,49 +31,49 @@ import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.windows.IOContainer;
 import org.openide.windows.IOProvider;
+import org.openide.windows.WindowManager;
 
 /**
  *
  * @author arwillis
  */
 public class RunInNetbeansTerminal {
+
     private static final RequestProcessor RP = new RequestProcessor("Terminal Action RP", 100); // NOI18N    
-    
+
     public static void runInNewTerminal(String tabName, String homeDir, String[] commandList) {
-            final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
+        final TerminalContainerTopComponent emulator = TerminalContainerTopComponent.findInstance();
 //            WindowManager.getDefault().findMode("editor").dockInto(emulator);
-            if (!emulator.isOpened()) {
-                //emulator.open();
-                emulator.requestActive();
+        if (!emulator.isOpened()) {
+            //emulator.open();
+            emulator.requestActive();
+        }
+        final IOContainer ioContainer = emulator.getIOContainer();
+        final IOProvider term = IOProvider.get("Terminal"); // NOI18N
+        // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
+        if (term != null) {
+            ExecutionEnvironment env = ExecutionEnvironmentFactory.getLocal();
+            if (env != null) {
+//                    System.out.println("homeDir = "+homeDir);
+                TerminalSupport.openTerminal(ioContainer, tabName, env, homeDir);
+                JComponent jc = ioContainer.getSelected();
+                jc.requestFocusInWindow();
+                RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
+                        commandList, ioContainer);
+                RP.post(runnable);
             }
-            final IOContainer ioContainer = emulator.getIOContainer();
-            final IOProvider term = IOProvider.get("Terminal"); // NOI18N
-            // TerminalContainerTopComponent.SILENT_MODE_COMMAND.equals(e.getActionCommand())            
-            if (term != null) {
-                ExecutionEnvironment env = ExecutionEnvironmentFactory.getLocal();
-                if (env != null) {
-//                    System.out.println("homeDir = "+homeDir);                    
-                    final MyTerminalSupportImpl mt = new MyTerminalSupportImpl();
-                    mt.openTerminalImpl(ioContainer, tabName, env, homeDir, false, false);
-//                final TopComponent[] tcs = WindowManager.getDefault().findMode("editor").getTopComponents();
-                    RunInNetbeansTerminal.RunCommandsInTerminal runnable = new RunInNetbeansTerminal.RunCommandsInTerminal(
-                            commandList, ioContainer, mt);
-                    RP.post(runnable);
-                }
-            }
+        }
     }
+
     static class RunCommandsInTerminal implements Runnable {
 
         String[] commandList = null;
         IOContainer ioContainer;
-        MyTerminalSupportImpl myTerminalImpl;
 
         public RunCommandsInTerminal(String[] commandList,
-                IOContainer ioContainer,
-                MyTerminalSupportImpl myTerminalImpl) {
+                IOContainer ioContainer) {
             this.commandList = commandList;
             this.ioContainer = ioContainer;
-            this.myTerminalImpl = myTerminalImpl;
         }
 
         @Override
@@ -84,23 +86,39 @@ public class RunInNetbeansTerminal {
         }
 
         private void doWork() {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            Term t = myTerminalImpl.gterm;
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            //clipboard.setContents(new StringSelection(commandList[0]), null);
             for (String cmd : commandList) {
-                clipboard.setContents(new StringSelection(cmd), null);
-                t.pasteFromClipboard();
+                //System.out.print(cmd);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ex) {
                     Exceptions.printStackTrace(ex);
                 }
+                clipboard.setContents(new StringSelection(cmd), null);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Robot robot = new Robot();
+                            robot.keyPress(KeyEvent.VK_CONTROL);
+                            robot.keyPress(KeyEvent.VK_SHIFT);
+                            robot.keyPress(KeyEvent.VK_V);
+                            robot.keyRelease(KeyEvent.VK_V);
+                            robot.keyRelease(KeyEvent.VK_SHIFT);
+                            robot.keyRelease(KeyEvent.VK_CONTROL);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
         }
     }
-    
 }

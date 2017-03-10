@@ -68,7 +68,7 @@ public final class ROSWorkspaceProjectServiceAction extends AbstractAction imple
         public ContextAction(Lookup context) {
             p = context.lookup(Project.class);
             String name = ProjectUtils.getInformation(p).getDisplayName();
-            if (p instanceof org.netbeans.modules.cnd.makeproject.MakeProject) {
+            if (p instanceof org.netbeans.modules.cnd.makeproject.api.MakeProject) {
                 setEnabled(true);
                 putValue(NAME, "Test");
             }

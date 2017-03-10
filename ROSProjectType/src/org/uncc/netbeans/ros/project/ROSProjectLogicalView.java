@@ -113,7 +113,7 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                 CommonProjectActions.setProjectConfigurationAction(),
                 CommonProjectActions.customizeProjectAction()
             };
-            ArrayList<Action> actionList = new ArrayList();
+            ArrayList<Action> actionList = new ArrayList<Action>();
             int idx = 0;
             for (Action a : nodeActions) {
                 if (a != null) {
@@ -128,7 +128,7 @@ public class ROSProjectLogicalView implements LogicalViewProvider {
                     }
                 }
             }
-            return (Action[]) actionList.toArray(new Action[0]);
+            return actionList.toArray(new Action[0]);
         }
 
         @Override
