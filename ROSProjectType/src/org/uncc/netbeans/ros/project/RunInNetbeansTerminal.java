@@ -16,6 +16,7 @@
  */
 package org.uncc.netbeans.ros.project;
 
+import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -87,7 +88,6 @@ public class RunInNetbeansTerminal {
 
         private void doWork() {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            //clipboard.setContents(new StringSelection(commandList[0]), null);
             for (String cmd : commandList) {
                 //System.out.print(cmd);
                 try {
@@ -112,8 +112,7 @@ public class RunInNetbeansTerminal {
                             robot.keyRelease(KeyEvent.VK_V);
                             robot.keyRelease(KeyEvent.VK_SHIFT);
                             robot.keyRelease(KeyEvent.VK_CONTROL);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (AWTException e) {
                         }
                     }
                 });
