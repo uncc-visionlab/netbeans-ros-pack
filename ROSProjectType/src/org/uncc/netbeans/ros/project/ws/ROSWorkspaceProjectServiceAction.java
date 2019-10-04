@@ -68,10 +68,10 @@ public final class ROSWorkspaceProjectServiceAction extends AbstractAction imple
         public ContextAction(Lookup context) {
             p = context.lookup(Project.class);
             String name = ProjectUtils.getInformation(p).getDisplayName();
-            if (p instanceof org.netbeans.modules.cnd.makeproject.api.MakeProject) {
-                setEnabled(true);
-                putValue(NAME, "Test");
-            }
+            //if (p instanceof org.netbeans.modules.cnd.makeproject.api.MakeProject) {
+            //    setEnabled(true);
+            //    putValue(NAME, "Test");
+            //}
 //            putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, true);
             putValue(DynamicMenuContent.HIDE_WHEN_DISABLED, false);
             // TODO menu item label with optional mnemonics

@@ -26,7 +26,7 @@ import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.SubprojectProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
-import org.netbeans.modules.cnd.makeproject.api.MakeProject;
+//import org.netbeans.modules.cnd.makeproject.api.MakeProject;
 //import org.netbeans.modules.cnd.makeproject.MakeProjectImpl;
 import org.uncc.netbeans.ros.pkg.ROSPackageProject;
 
@@ -56,9 +56,9 @@ public class ROSProjectProjectProvider implements SubprojectProvider {
                 try {
                     if (childFolder.isFolder()) {
                         Project subp = ProjectManager.getDefault().findProject(childFolder);
-                        if (subp != null && subp instanceof MakeProject) {
-                            newProjects.add((MakeProject) subp);
-                        }
+                        //if (subp != null && subp instanceof MakeProject) {
+                        //    newProjects.add((MakeProject) subp);
+                        //}
                         if (subp != null && subp instanceof ROSPackageProject) {
                             newProjects.add((ROSPackageProject) subp);                            
                         }
